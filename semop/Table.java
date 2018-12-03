@@ -36,12 +36,13 @@ public class Table {
 		return new ExtEvent(ev);
 	}
 	
-	public Table(HashMap<String, Leader> leaders) {
+	public void setLeaders(HashMap<String, Leader> leadersMap) {
 		theTable = new HashMap<>();
-		this.leaders = leaders;
+		this.leaders = leadersMap;
 		for (String s:leaders.keySet()) {
 			theTable.put(s, new LinkedList<>());
 		}
+		
 	}
 
 }

@@ -2,11 +2,11 @@ package spec.tickexp;
 
 import semop.TickTime;
 
-public class ConstExpr implements ITickExpr {
+public class ConstTickExpr implements ITickExpr {
 	// init this:
 	private int myVal;
 
-	public ConstExpr(int val) {
+	public ConstTickExpr(int val) {
 		myVal=val;
 	}
 
