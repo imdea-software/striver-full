@@ -19,7 +19,7 @@ public class Pointer {
 		}
 		
 		ExtEvent ev = t.getNext(myStreamId, myPos);
-		if (ev.getType() == ExtEvent.ExtEvType.reentrant) {
+		if (ev.isreentrant()) {
 			return ev;
 		}
 		myPos = ev.getEvent().getTS();

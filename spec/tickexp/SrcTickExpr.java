@@ -13,7 +13,7 @@ public class SrcTickExpr implements ITickExpr {
 	public TickTime calculateNextTime() {
 		//assert(mypointer.myPos <= lastpos);
 		ExtEvent ev = mypointer.pull();
-		assert ev.getType() != ExtEvent.ExtEvType.reentrant;
+		assert !ev.isreentrant();
 		int ts = ev.getEvent().getTS();
 		return new TickTime(ts,!ev.getEvent().getValue().isPresent());
 	}

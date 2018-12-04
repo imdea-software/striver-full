@@ -31,8 +31,8 @@ public class FutStriver {
 		Leader lr = new Leader(r);
 
 		// x def
-		Pointer pxs = new Pointer(theTable, "s");
-        te = new AtTickExpr(pxs);
+		Pointer pxx = new Pointer(theTable, "x");
+        te = new AtTickExpr(pxx);
 		ve = new RandomIntExpr();
 		StriverSpec x = new StriverSpec(te, ve, "x");
 		Leader lx = new Leader(x);

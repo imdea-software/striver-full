@@ -1,7 +1,6 @@
 package spec.tickexp;
 
 import adts.ExtEvent;
-import adts.ExtEvent.ExtEvType;
 import semop.Pointer;
 import semop.TickTime;
 
@@ -15,7 +14,7 @@ public class AtTickExpr implements ITickExpr {
 	public TickTime calculateNextTime() {
 		ExtEvent ev = mypointer.pull();
 		int evts = Integer.MAX_VALUE;
-		if (ev.getType() == ExtEvType.real) {
+		if (!ev.isreentrant()) {
 			evts = ev.getEvent().getTS();
 		}
 		if (sum!=null && sum <= evts) {
@@ -23,7 +22,7 @@ public class AtTickExpr implements ITickExpr {
 			sum=null;
 			return tt;
 		}
-		if (!ev.getEvent().isnotick()) {
+		if (evts<Integer.MAX_VALUE && !ev.getEvent().isnotick()) {
 			sum = ev.getEvent().getTS() + (Integer) ev.getEvent().getValue().get();
 		}
 		return new TickTime(evts, true);

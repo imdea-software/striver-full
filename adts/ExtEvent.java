@@ -1,14 +1,14 @@
 package adts;
 
 public class ExtEvent {
-	public enum ExtEvType {
+	private enum ExtEvType {
 		reentrant,
-		real
+		nonreentrant
 	}
 	public static final ExtEvent reentrantevent = new ExtEvent();
 
 	public static final ExtEvent outsideEv = new ExtEvent(StriverEvent.outsideEv);
-	private ExtEvType myType=ExtEvType.real;
+	private ExtEvType myType=ExtEvType.nonreentrant;
 	private StriverEvent ev;
 	
 	private ExtEvent() {
@@ -19,8 +19,8 @@ public class ExtEvent {
 		this.ev = ev2;
 	}
 
-	public ExtEvType getType() {
-		return myType;
+	public boolean isreentrant() {
+		return myType == ExtEvType.reentrant;
 	}
 
 	public StriverEvent getEvent() {
