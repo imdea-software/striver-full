@@ -6,6 +6,7 @@ import semop.Leader;
 import semop.Pointer;
 import semop.Table;
 import spec.StriverSpec;
+import spec.tickexp.AtTickExpr;
 import spec.tickexp.ConstTickExpr;
 import spec.tickexp.ITickExpr;
 import spec.tickexp.SrcTickExpr;
@@ -28,15 +29,24 @@ public class FutStriver {
 		ve = new RandomIntExpr();
 		StriverSpec r = new StriverSpec(te, ve, "r");
 		Leader lr = new Leader(r);
+
+		// x def
+		Pointer pxs = new Pointer(theTable, "s");
+        te = new AtTickExpr(pxs);
+		ve = new RandomIntExpr();
+		StriverSpec x = new StriverSpec(te, ve, "x");
+		Leader lx = new Leader(x);
 		
 		// table
 		HashMap<String, Leader> leadersMap = new HashMap<>();
 		leadersMap.put("s", ls);
 		leadersMap.put("r", lr);
+		leadersMap.put("x", lx);
 		theTable.setLeaders(leadersMap);
 		
 		
-		Pointer p = new Pointer(theTable, "r");
+		Pointer p = new Pointer(theTable, "x");
+		System.out.println(p.pull());
 		System.out.println(p.pull());
 		System.out.println(p.pull());
     }

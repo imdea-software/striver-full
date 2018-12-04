@@ -19,13 +19,14 @@ public class Leader {
 	}
 
 	public StriverEvent getNext(int lastpos) {
-		TickTime tickTime = myTickExpr.calculateNextTime(lastpos);
+		// TODO remove param
+		TickTime tickTime = myTickExpr.calculateNextTime();
 		int nt = tickTime.time;
 		if (nt == Integer.MAX_VALUE) {
 			return StriverEvent.outsideEv;
 		}
 		if (tickTime.isnotick) {
-			return new StriverEvent(nt, null);
+			return new StriverEvent(nt, Optional.empty());
 		}
 		Optional<Object> val = myValExpr.calculateValueAt(nt);
 		return new StriverEvent(nt, val);

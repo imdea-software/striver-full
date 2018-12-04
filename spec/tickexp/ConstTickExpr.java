@@ -3,6 +3,7 @@ package spec.tickexp;
 import semop.TickTime;
 
 public class ConstTickExpr implements ITickExpr {
+	private boolean given=false;
 	// init this:
 	private int myVal;
 
@@ -11,8 +12,9 @@ public class ConstTickExpr implements ITickExpr {
 	}
 
 	@Override
-	public TickTime calculateNextTime(int lastpos) {
-		if (myVal > lastpos) {
+	public TickTime calculateNextTime() {
+		if (!given) {
+			given=true;
 			return new TickTime(myVal, false);
 		}
 		return new TickTime(Integer.MAX_VALUE, false);

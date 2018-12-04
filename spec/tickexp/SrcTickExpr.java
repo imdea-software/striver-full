@@ -10,12 +10,11 @@ public class SrcTickExpr implements ITickExpr {
 	private Pointer mypointer;
 
 	@Override
-	public TickTime calculateNextTime(int lastpos) {
+	public TickTime calculateNextTime() {
 		//assert(mypointer.myPos <= lastpos);
 		ExtEvent ev = mypointer.pull();
 		assert ev.getType() != ExtEvent.ExtEvType.reentrant;
 		int ts = ev.getEvent().getTS();
-		assert ts > lastpos;
 		return new TickTime(ts,!ev.getEvent().getValue().isPresent());
 	}
 	
