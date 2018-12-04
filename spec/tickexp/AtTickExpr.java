@@ -14,15 +14,23 @@ public class AtTickExpr implements ITickExpr {
 	public TickTime calculateNextTime() {
 		ExtEvent ev = mypointer.pull();
 		int evts = Integer.MAX_VALUE;
-		if (!ev.isreentrant()) {
+		if (sum==null) {
+			if (ev.isreentrant()) {
+				return new TickTime(Integer.MAX_VALUE, true);
+			}
 			evts = ev.getEvent().getTS();
+			if (ev.getEvent().isnotick()) {
+				return new TickTime(evts, true);
+			}
+			sum = evts + (Integer) ev.getEvent().getValue().get();
+			return calculateNextTime();
 		}
-		if (sum!=null && sum <= evts) {
+		if (ev.isreentrant() || sum <= ev.getEvent().getTS()) {
 			TickTime tt = new TickTime(sum, false);
 			sum=null;
 			return tt;
 		}
-		if (evts<Integer.MAX_VALUE && !ev.getEvent().isnotick()) {
+		if (!ev.getEvent().isnotick()) {
 			sum = ev.getEvent().getTS() + (Integer) ev.getEvent().getValue().get();
 		}
 		return new TickTime(evts, true);

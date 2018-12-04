@@ -17,7 +17,6 @@ public class Pointer {
 		if (myPos == Integer.MAX_VALUE) {
 			return ExtEvent.outsideEv;
 		}
-		
 		ExtEvent ev = t.getNext(myStreamId, myPos);
 		if (ev.isreentrant()) {
 			return ev;

@@ -8,4 +8,5 @@ public class TickTime {
 		this.time = time;
 		this.isnotick = isnotick;
 	}
+	
 }

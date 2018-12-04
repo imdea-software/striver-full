@@ -10,6 +10,7 @@ import spec.tickexp.AtTickExpr;
 import spec.tickexp.ConstTickExpr;
 import spec.tickexp.ITickExpr;
 import spec.tickexp.SrcTickExpr;
+import spec.tickexp.UnionTickExpr;
 import spec.valueexp.IValExpr;
 import spec.valueexp.RandomIntExpr;
 
@@ -31,10 +32,14 @@ public class FutStriver {
 		Leader lr = new Leader(r);
 
 		// x def
+		Pointer pxr = new Pointer(theTable, "r");
 		Pointer pxx = new Pointer(theTable, "x");
-        te = new AtTickExpr(pxx);
+		ITickExpr tel = new ConstTickExpr(2);
+		ITickExpr terr = new AtTickExpr(pxr);
+		ITickExpr terx = new AtTickExpr(pxx);
+        te = new UnionTickExpr(tel, terr);
 		ve = new RandomIntExpr();
-		StriverSpec x = new StriverSpec(te, ve, "x");
+		StriverSpec x = new StriverSpec(terr, ve, "x");
 		Leader lx = new Leader(x);
 		
 		// table
@@ -46,6 +51,14 @@ public class FutStriver {
 		
 		
 		Pointer p = new Pointer(theTable, "x");
+		System.out.println(p.pull());
+		System.out.println(p.pull());
+		System.out.println(p.pull());
+		System.out.println(p.pull());
+		System.out.println(p.pull());
+		System.out.println(p.pull());
+		System.out.println(p.pull());
+		System.out.println(p.pull());
 		System.out.println(p.pull());
 		System.out.println(p.pull());
 		System.out.println(p.pull());
