@@ -1,9 +1,10 @@
 package semop;
 
+import adts.Constants;
 import adts.ExtEvent;
 
 public class Pointer {
-	private int myPos = -1;
+	private double myPos = -1;
 	// init these:
 	private Table t;
 	private String myStreamId;
@@ -14,15 +15,18 @@ public class Pointer {
 	}
 	
 	public ExtEvent pull() {
-		if (myPos == Integer.MAX_VALUE) {
+		if (myPos == Constants.INFTY) {
 			return ExtEvent.outsideEv;
 		}
 		ExtEvent ev = t.getNext(myStreamId, myPos);
-		if (ev.isreentrant()) {
-			return ev;
+		if (!ev.isreentrant()) {
+			myPos = ev.getEvent().getTS();
 		}
-		myPos = ev.getEvent().getTS();
 		return ev;
+	}
+
+	public String getStreamId() {
+		return this.myStreamId;
 	}
 	
 

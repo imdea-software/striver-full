@@ -1,12 +1,13 @@
 package spec.tickexp;
 
+import adts.Constants;
 import adts.ExtEvent;
 import semop.Pointer;
 import semop.TickTime;
 
 public class AtTickExpr implements ITickExpr {
 
-	private Integer sum=Integer.MAX_VALUE;
+	private double sum=Constants.INFTY;
 	// init this
 	private Pointer mypointer;
 
@@ -14,15 +15,15 @@ public class AtTickExpr implements ITickExpr {
 	public TickTime calculateNextTime() {
 		ExtEvent ev = mypointer.pull();
 		TickTime ret=null;
-		int evts = ev.isreentrant()?Integer.MAX_VALUE:ev.getEvent().getTS();
+		double evts = ev.isreentrant()?Constants.INFTY:ev.getEvent().getTS();
 		if (sum <= evts) {
 			// alarm goes off
 			ret = new TickTime(sum, false);
-			sum = Integer.MAX_VALUE;
+			sum = Constants.INFTY;
 		}
 		// maybe update alarm with pulled event
-		if (evts < Integer.MAX_VALUE) {
-			sum = evts + (Integer) ev.getEvent().getValue().get();
+		if (evts < Constants.INFTY && !ev.getEvent().isnotick()) {
+			sum = evts + (double) ev.getEvent().getValue().get();
 		}
 		if (ret==null) { // Alarm didn't go off
 			ret = new TickTime(evts, true);

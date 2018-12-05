@@ -1,44 +1,54 @@
 package spec.tickexp;
 
+import adts.Constants;
 import semop.TickTime;
 
 public class UnionTickExpr implements ITickExpr {
 	
 	private TickTime leftTickTime=null, rightTickTime=null;
+	private double lastts = -1;
 	//init these
 	private ITickExpr leftExpr, rightExpr;
 
 	@Override
 	public TickTime calculateNextTime() {
-		int retint=0;
+		double retdouble=0;
 		boolean retbool=true;
-		if (leftTickTime == null) {
-			leftTickTime = leftExpr.calculateNextTime();
-		}
-		if (rightTickTime == null) {
-			rightTickTime = rightExpr.calculateNextTime();
-		}
-		int leftt = leftTickTime.time;
-		int rightt = rightTickTime.time;
+		leftTickTime = getNext(leftTickTime, leftExpr);
+		rightTickTime = getNext(rightTickTime, rightExpr);
+		double leftt = leftTickTime.time;
+		double rightt = rightTickTime.time;
 		if (leftt <= rightt) {
-			retint = leftt;
+			retdouble = leftt;
 			retbool = leftTickTime.isnotick;
 			leftTickTime = null;
 		}
 		if (rightt <= leftt) {
-			retint = rightt;
+			retdouble = rightt;
 			retbool = retbool && rightTickTime.isnotick;
 			rightTickTime = null;
 		}
-		if (rightt == Integer.MAX_VALUE) {
+		if (rightt == Constants.INFTY) {
 			rightTickTime = null;
 		}
-		if (leftt == Integer.MAX_VALUE) {
+		if (leftt == Constants.INFTY) {
 			leftTickTime = null;
 		}
-		return new TickTime(retint, retbool);
+		assert (retdouble > lastts || lastts == Constants.INFTY);
+		lastts = retdouble;
+		return new TickTime(retdouble, retbool);
 	}
 	
+	private TickTime getNext(TickTime tickTime, ITickExpr tickExpr) {
+		if (tickTime == null) {
+			tickTime = tickExpr.calculateNextTime();
+			if (tickTime.time == lastts) {
+				tickTime = tickExpr.calculateNextTime();
+			}
+		}
+		return tickTime;
+	}
+
 	public UnionTickExpr(ITickExpr leftExpr, ITickExpr rightExpr) {
 		this.leftExpr = leftExpr;
 		this.rightExpr = rightExpr;

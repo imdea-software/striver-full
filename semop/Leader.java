@@ -2,6 +2,7 @@ package semop;
 
 import java.util.Optional;
 
+import adts.Constants;
 import adts.StriverEvent;
 import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
@@ -18,11 +19,10 @@ public class Leader {
 		this.myValExpr = s.getValExpr();
 	}
 
-	public StriverEvent getNext(int lastpos) {
-		// TODO remove param
+	public StriverEvent getNext() {
 		TickTime tickTime = myTickExpr.calculateNextTime();
-		int nt = tickTime.time;
-		if (nt == Integer.MAX_VALUE) {
+		double nt = tickTime.time;
+		if (nt == Constants.INFTY) {
 			return StriverEvent.outsideEv;
 		}
 		if (tickTime.isnotick) {

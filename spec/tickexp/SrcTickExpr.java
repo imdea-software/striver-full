@@ -14,7 +14,7 @@ public class SrcTickExpr implements ITickExpr {
 		//assert(mypointer.myPos <= lastpos);
 		ExtEvent ev = mypointer.pull();
 		assert !ev.isreentrant();
-		int ts = ev.getEvent().getTS();
+		double ts = ev.getEvent().getTS();
 		return new TickTime(ts,!ev.getEvent().getValue().isPresent());
 	}
 	

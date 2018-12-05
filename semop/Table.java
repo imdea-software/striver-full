@@ -15,13 +15,12 @@ public class Table {
 	private HashMap<String, LinkedList<StriverEvent>> theTable;
 	private HashMap<String, Leader> leaders;
 	
-	public ExtEvent getNext(String streamid, int lastpos) {
+	public ExtEvent getNext(String streamid, double myPos) {
 		LinkedList<StriverEvent> themap = theTable.get(streamid);
-		assert(themap != null);
 		Iterator<StriverEvent> it = themap.iterator();
 		while (it.hasNext()) {
 			StriverEvent ev = it.next();
-			if (ev.getTS() > lastpos) {
+			if (ev.getTS() > myPos) {
 				return new ExtEvent(ev);
 			}
 		}
@@ -30,7 +29,7 @@ public class Table {
 			return ExtEvent.reentrantevent;
 		}
 		resolving.add(streamid);
-		StriverEvent ev = leaders.get(streamid).getNext(lastpos);
+		StriverEvent ev = leaders.get(streamid).getNext();
 		themap.add(ev); // Check if it is notick?
 		resolving.remove(streamid);
 		return new ExtEvent(ev);

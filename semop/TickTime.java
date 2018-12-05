@@ -1,11 +1,11 @@
 package semop;
 
 public class TickTime {
-	public int time;
+	public double time;
 	public boolean isnotick;
 	
-	public TickTime(int time, boolean isnotick) {
-		this.time = time;
+	public TickTime(double d, boolean isnotick) {
+		this.time = d;
 		this.isnotick = isnotick;
 	}
 	

@@ -1,6 +1,9 @@
 package main;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import semop.Leader;
 import semop.Pointer;
@@ -49,19 +52,15 @@ public class FutStriver {
 		leadersMap.put("x", lx);
 		theTable.setLeaders(leadersMap);
 		
+		// pointers
+		Pointer ps = new Pointer(theTable, "s");
+		Pointer pr = new Pointer(theTable, "r");
+		Pointer px = new Pointer(theTable, "x");
+		List<Pointer> pointers = Arrays.asList(ps, pr, px);
 		
-		Pointer p = new Pointer(theTable, "x");
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
-		System.out.println(p.pull());
+			for (Pointer p:pointers)
+		for (int i=0;i<10;i++)
+				System.out.println(p.getStreamId() + " : "+p.pull());
     }
 
 }

@@ -4,16 +4,16 @@ import java.util.Optional;
 
 public class StriverEvent {
 	
-	public static final StriverEvent outsideEv = new StriverEvent(Integer.MAX_VALUE, Optional.empty());
-	private int ts;
+	public static final StriverEvent outsideEv = new StriverEvent(Constants.INFTY, Optional.empty());
+	private double ts;
 	private Optional<Object> value;
 
-	public StriverEvent(int ts, Optional<Object> object) {
-		this.ts = ts;
+	public StriverEvent(double nt, Optional<Object> object) {
+		this.ts = nt;
 		this.value = object;
 	}
 
-	public int getTS() {
+	public double getTS() {
 		return ts;
 	}
 	

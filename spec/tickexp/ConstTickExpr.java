@@ -1,5 +1,6 @@
 package spec.tickexp;
 
+import adts.Constants;
 import semop.TickTime;
 
 public class ConstTickExpr implements ITickExpr {
@@ -17,7 +18,7 @@ public class ConstTickExpr implements ITickExpr {
 			given=true;
 			return new TickTime(myVal, false);
 		}
-		return new TickTime(Integer.MAX_VALUE, false);
+		return new TickTime(Constants.INFTY, false);
 	}
 	
 
