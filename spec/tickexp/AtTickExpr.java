@@ -6,37 +6,28 @@ import semop.TickTime;
 
 public class AtTickExpr implements ITickExpr {
 
-	private Integer sum=null;
+	private Integer sum=Integer.MAX_VALUE;
 	// init this
 	private Pointer mypointer;
 
 	@Override
 	public TickTime calculateNextTime() {
 		ExtEvent ev = mypointer.pull();
-		if (sum==null) {
-			if (ev.isreentrant()) {
-				return new TickTime(Integer.MAX_VALUE, true);
-			}
-			if (ev.getEvent().isnotick()) {
-				return new TickTime(ev.getEvent().getTS(), true);
-			}
-			updateSum(ev);
-			return calculateNextTime();
+		TickTime ret=null;
+		int evts = ev.isreentrant()?Integer.MAX_VALUE:ev.getEvent().getTS();
+		if (sum <= evts) {
+			// alarm goes off
+			ret = new TickTime(sum, false);
+			sum = Integer.MAX_VALUE;
 		}
-		if (ev.isreentrant() || sum <= ev.getEvent().getTS()) {
-			TickTime tt = new TickTime(sum, false);
-			sum=null;
-			return tt;
+		// maybe update alarm with pulled event
+		if (evts < Integer.MAX_VALUE) {
+			sum = evts + (Integer) ev.getEvent().getValue().get();
 		}
-		if (!ev.getEvent().isnotick()) {
-			updateSum(ev);
+		if (ret==null) { // Alarm didn't go off
+			ret = new TickTime(evts, true);
 		}
-		return new TickTime(ev.getEvent().getTS(), true);
-	}
-
-	private void updateSum(ExtEvent ev) {
-		int evts = ev.getEvent().getTS();
-		sum = evts + (Integer) ev.getEvent().getValue().get();
+		return ret;
 	}
 
 	public AtTickExpr(Pointer p) {

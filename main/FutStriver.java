@@ -37,9 +37,9 @@ public class FutStriver {
 		ITickExpr tel = new ConstTickExpr(2);
 		ITickExpr terr = new AtTickExpr(pxr);
 		ITickExpr terx = new AtTickExpr(pxx);
-        te = new UnionTickExpr(tel, terr);
+        te = new UnionTickExpr(tel, terx);
 		ve = new RandomIntExpr();
-		StriverSpec x = new StriverSpec(terr, ve, "x");
+		StriverSpec x = new StriverSpec(te, ve, "x");
 		Leader lx = new Leader(x);
 		
 		// table
