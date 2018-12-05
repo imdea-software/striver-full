@@ -5,7 +5,7 @@ import adts.ExtEvent;
 import semop.Pointer;
 import semop.TickTime;
 
-public class AtTickExpr implements ITickExpr {
+public class AtPosTickExpr implements ITickExpr {
 
 	private double sum=Constants.INFTY;
 	// init this
@@ -31,7 +31,7 @@ public class AtTickExpr implements ITickExpr {
 		return ret;
 	}
 
-	public AtTickExpr(Pointer p) {
+	public AtPosTickExpr(Pointer p) {
 		this.mypointer = p;
 	}
 

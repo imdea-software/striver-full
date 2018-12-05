@@ -2,7 +2,7 @@ package spec.valueexp;
 
 import java.util.Optional;
 
-public class RandomIntExpr implements IValExpr {
+public class RandomPosIntExpr implements IValExpr {
 
 	@Override
 	public Optional<Object> calculateValueAt(double nt) {
