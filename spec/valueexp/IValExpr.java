@@ -2,8 +2,8 @@ package spec.valueexp;
 
 import java.util.Optional;
 
-public interface IValExpr {
+public interface IValExpr<T> {
 
-	Optional<Object> calculateValueAt(double nt);
+	Optional<T> calculateValueAt(double nt);
 
 }

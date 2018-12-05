@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import adts.MaybeOutside;
 import semop.Leader;
 import semop.Pointer;
 import semop.Table;
@@ -17,6 +18,7 @@ import spec.tickexp.SrcTickExpr;
 import spec.tickexp.UnionTickExpr;
 import spec.valueexp.IValExpr;
 import spec.valueexp.RandomPosIntExpr;
+import spec.valueexp.tauexp.TExpr;
 import spec.valueexp.RandomNegIntExpr;
 
 public class FutStriver {
@@ -25,14 +27,14 @@ public class FutStriver {
 		Table theTable = new Table();
 		// s def
         ITickExpr te = new ConstTickExpr(9);
-		IValExpr ve = new RandomPosIntExpr();
-		StriverSpec s = new StriverSpec(te, ve, "s");
+		IValExpr<MaybeOutside<Double>> veout = new TExpr();
+		StriverSpec s = new StriverSpec(te, veout, "s");
 		Leader ls = new Leader(s);
 
 		// r def
 		Pointer prs = new Pointer(theTable, "s");
         te = new SrcTickExpr(prs);
-		ve = new RandomPosIntExpr();
+		IValExpr<Double> ve = new RandomPosIntExpr();
 		StriverSpec r = new StriverSpec(te, ve, "r");
 		Leader lr = new Leader(r);
 
