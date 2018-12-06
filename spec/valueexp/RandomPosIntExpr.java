@@ -1,12 +1,18 @@
 package spec.valueexp;
 
 import java.util.Optional;
+import java.util.Random;
 
 public class RandomPosIntExpr implements IValExpr<Double> {
 
+	private	Random r = new Random();
+	private double rangeMin = 1d;
+	private double rangeMax = 6d;
+
 	@Override
 	public Optional<Double> calculateValueAt(double nt) {
-		return Optional.of(5d);
+		double ran = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+		return Optional.of(ran);
 	}
 
 }

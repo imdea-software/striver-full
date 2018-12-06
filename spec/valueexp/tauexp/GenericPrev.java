@@ -2,48 +2,72 @@ package spec.valueexp.tauexp;
 
 import adts.ExtEvent;
 import adts.MaybeOutside;
+import adts.StriverEvent;
 import semop.Pointer;
 
-public class GenericPrev extends ITauExp {
+public class GenericPrev<T> {
 	
-	private MaybeOutside<Double> lastret = MaybeOutside.outside();
+	private interface IValExtractor<R> {
+		public MaybeOutside<R> extractValue(StriverEvent striverEvent);
+	}
+	
+	private MaybeOutside<T> lastret = MaybeOutside.outside();
 	private Double headt=-1d;
-	private boolean headisreal=false;
+	private MaybeOutside<T> headv = MaybeOutside.outside();
 	// init these
 	private Pointer myPointer;
 	private ITauExp innertau;
 	private boolean isEq;
+	private IValExtractor<T> extractor;
 
-	@Override
-	public MaybeOutside<Double> getT(double t) {
+	public MaybeOutside<T> getRes(double t) {
 		MaybeOutside<Double> mt = innertau.getT(t);
 		if (!mt.isPresent()) {
-			return mt;
+			return MaybeOutside.outside();
 		}
 		t = mt.get();
 		while (headt<t) {
-			if (headisreal) {
-				lastret = MaybeOutside.of(headt);
+			if (headv.isPresent()) {
+				lastret = headv;
 			}
 			ExtEvent extev = myPointer.pull();
 			if (!isEq && extev.isreentrant()) {
 				return lastret;
 			}
 			headt = extev.getEvent().getTS();
-			headisreal = !extev.getEvent().isnotick();
+			headv = extractor.extractValue(extev.getEvent());
 		}
 		if (isEq && headt==t) {
-			if (headisreal) {
-				lastret = MaybeOutside.of(headt);
+			if (headv.isPresent()) {
+				lastret = headv;
 			}
 		}
 		return lastret;
 	}
 	
-	public GenericPrev(Pointer p, ITauExp it, boolean iseq) {
+	public GenericPrev(Pointer p, ITauExp it, boolean iseq, boolean isval) {
 		this.myPointer = p;
 		this.innertau = it;
 		this.isEq = iseq;
+		this.extractor = isval?
+			new IValExtractor<T>() {
+				@Override
+				public MaybeOutside<T> extractValue(StriverEvent ev) {
+					if (ev.isnotick()) {
+						return MaybeOutside.outside();
+					}
+					return MaybeOutside.of((T) ev.getValue().get());
+				}
+			}:
+			new IValExtractor<T>() {
+				@Override
+				public MaybeOutside<T> extractValue(StriverEvent ev) {
+					if (ev.isnotick()) {
+						return MaybeOutside.outside();
+					}
+					return (MaybeOutside<T>) MaybeOutside.of(ev.getTS());
+				}
+			};
 	}
 
 }

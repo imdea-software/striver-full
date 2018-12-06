@@ -5,15 +5,15 @@ import semop.Pointer;
 
 public class PrevEqExp extends ITauExp {
 	
-	private GenericPrev genericprev;
+	private GenericPrev<Double> genericprev;
 
 	public PrevEqExp(Pointer p, ITauExp it) {
-		this.genericprev = new GenericPrev(p, it, true);
+		this.genericprev = new GenericPrev<Double>(p, it, true, false);
 	}
 
 	@Override
 	public MaybeOutside<Double> getT(double t) {
-		return genericprev.getT(t);
+		return genericprev.getRes(t);
 	}
 
 }
