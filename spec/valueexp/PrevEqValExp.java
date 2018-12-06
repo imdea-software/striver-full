@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import adts.MaybeOutside;
 import semop.Pointer;
-import spec.valueexp.tauexp.GenericPrev;
 import spec.valueexp.tauexp.ITauExp;
 
 public class PrevEqValExp<T> implements IValExpr<MaybeOutside<T>> {

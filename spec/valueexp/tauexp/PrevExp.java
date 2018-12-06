@@ -2,6 +2,7 @@ package spec.valueexp.tauexp;
 
 import adts.MaybeOutside;
 import semop.Pointer;
+import spec.valueexp.GenericPrev;
 
 public class PrevExp extends ITauExp {
 	

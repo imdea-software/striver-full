@@ -8,11 +8,11 @@ import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
 import spec.valueexp.IValExpr;
 
-public class Leader {
+public class Leader<T> {
 	
 	// init these
 	private ITickExpr myTickExpr;
-	private IValExpr myValExpr;
+	private IValExpr<T> myValExpr;
 	
 	public Leader(StriverSpec s) {
 		this.myTickExpr = s.getTickExpr();
@@ -28,7 +28,7 @@ public class Leader {
 		if (tickTime.isnotick) {
 			return new StriverEvent(nt, Optional.empty());
 		}
-		Optional<Object> val = myValExpr.calculateValueAt(nt);
+		Optional<Object> val = (Optional<Object>) myValExpr.calculateValueAt(nt);
 		return new StriverEvent(nt, val);
 	}
 
