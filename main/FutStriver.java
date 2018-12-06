@@ -18,6 +18,8 @@ import spec.tickexp.SrcTickExpr;
 import spec.tickexp.UnionTickExpr;
 import spec.valueexp.IValExpr;
 import spec.valueexp.RandomPosIntExpr;
+import spec.valueexp.tauexp.ITauExp;
+import spec.valueexp.tauexp.PrevExp;
 import spec.valueexp.tauexp.TExpr;
 import spec.valueexp.RandomNegIntExpr;
 
@@ -51,11 +53,19 @@ public class FutStriver {
 		ITickExpr tel = new ConstTickExpr(2);
 		ITickExpr terr = new AtPosTickExpr(pxr);
 		ITickExpr terxpos = new AtPosTickExpr(pxx);
-		ITickExpr terxneg = new AtNegTickExpr(pxrneg);
-        te = new UnionTickExpr(tel, terxneg);
+		ITickExpr terrneg = new AtNegTickExpr(pxrneg);
+        te = new UnionTickExpr(tel, terxpos);
 		ve = new RandomPosIntExpr();
 		StriverSpec x = new StriverSpec(te, ve, "x");
 		Leader lx = new Leader(x);
+		
+		// prevx def
+		Pointer pprevxx0 = new Pointer(theTable, "x");
+        te = new SrcTickExpr(pprevxx0);
+		Pointer pprevxx1 = new Pointer(theTable, "x");
+		ITauExp veT = new PrevExp(pprevxx1, new TExpr());
+		StriverSpec prevx = new StriverSpec(te, veT, "prevx");
+		Leader lprevx = new Leader(prevx);
 		
 		// table
 		HashMap<String, Leader> leadersMap = new HashMap<>();
@@ -63,6 +73,7 @@ public class FutStriver {
 		leadersMap.put("r", lr);
 		leadersMap.put("x", lx);
 		leadersMap.put("rneg", lrneg);
+		leadersMap.put("prevx", lprevx);
 		theTable.setLeaders(leadersMap);
 		
 		// pointers
@@ -70,7 +81,8 @@ public class FutStriver {
 		Pointer pr = new Pointer(theTable, "r");
 		Pointer px = new Pointer(theTable, "x");
 		Pointer prneg = new Pointer(theTable, "rneg");
-		List<Pointer> pointers = Arrays.asList(ps, pr, px, prneg);
+		Pointer pprevx = new Pointer(theTable, "prevx");
+		List<Pointer> pointers = Arrays.asList(px, pprevx);
 		
 			for (Pointer p:pointers)
 		for (int i=0;i<10;i++)
