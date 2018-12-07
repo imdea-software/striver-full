@@ -30,7 +30,11 @@ public class Table {
 		}
 		resolving.add(streamid);
 		StriverEvent ev = leaders.get(streamid).getNext();
-		themap.add(ev); // Check if it is notick?
+		StriverEvent last = themap.peekLast();
+		if (last != null && last.isnotick()) {
+			themap.removeLast();
+		}
+		themap.add(ev);
 		resolving.remove(streamid);
 		return new ExtEvent(ev);
 	}

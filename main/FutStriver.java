@@ -20,6 +20,8 @@ import spec.valueexp.IValExpr;
 import spec.valueexp.PrevEqValExp;
 import spec.valueexp.PrevValExp;
 import spec.valueexp.RandomPosIntExpr;
+import spec.valueexp.SuccEqValExp;
+import spec.valueexp.SuccValExp;
 import spec.valueexp.tauexp.ITauExp;
 import spec.valueexp.tauexp.PrevExp;
 import spec.valueexp.tauexp.TExpr;
@@ -65,7 +67,7 @@ public class FutStriver {
 		Pointer pprevxx0 = new Pointer(theTable, "x");
         te = new SrcTickExpr(pprevxx0);
 		Pointer pprevxx1 = new Pointer(theTable, "x");
-		IValExpr<MaybeOutside<Double>> veT = new PrevValExp<Double>(pprevxx1, new TExpr());
+		IValExpr<MaybeOutside<Double>> veT = new SuccValExp<Double>(pprevxx1, new TExpr());
 		StriverSpec prevx = new StriverSpec(te, veT, "prevx");
 		Leader lprevx = new Leader(prevx);
 		
