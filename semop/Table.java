@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import adts.ExtEvent;
+import adts.MaybeReentrant;
 import adts.StriverEvent;
 
 public class Table {
@@ -13,20 +13,20 @@ public class Table {
 	private HashSet<String> resolving = new HashSet<String>();
 	// init these:
 	private HashMap<String, LinkedList<StriverEvent>> theTable;
-	private HashMap<String, Leader> leaders;
+	private HashMap<String, ILeader> leaders;
 	
-	public ExtEvent getNext(String streamid, double myPos) {
+	public MaybeReentrant getNext(String streamid, double myPos) {
 		LinkedList<StriverEvent> themap = theTable.get(streamid);
 		Iterator<StriverEvent> it = themap.iterator();
 		while (it.hasNext()) {
 			StriverEvent ev = it.next();
 			if (ev.getTS() > myPos) {
-				return new ExtEvent(ev);
+				return MaybeReentrant.of(ev);
 			}
 		}
 		// Calculate it:
 		if (resolving.contains(streamid)) {
-			return ExtEvent.reentrantevent;
+			return MaybeReentrant.reentrantevent();
 		}
 		resolving.add(streamid);
 		StriverEvent ev = leaders.get(streamid).getNext();
@@ -36,10 +36,10 @@ public class Table {
 		}
 		themap.add(ev);
 		resolving.remove(streamid);
-		return new ExtEvent(ev);
+		return MaybeReentrant.of(ev);
 	}
 	
-	public void setLeaders(HashMap<String, Leader> leadersMap) {
+	public void setLeaders(HashMap<String, ILeader> leadersMap) {
 		theTable = new HashMap<>();
 		this.leaders = leadersMap;
 		for (String s:leaders.keySet()) {

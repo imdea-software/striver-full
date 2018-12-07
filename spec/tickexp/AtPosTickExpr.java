@@ -1,7 +1,7 @@
 package spec.tickexp;
 
 import adts.Constants;
-import adts.ExtEvent;
+import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
 
@@ -13,7 +13,7 @@ public class AtPosTickExpr implements ITickExpr {
 
 	@Override
 	public TickTime calculateNextTime() {
-		ExtEvent ev = mypointer.pull();
+		MaybeReentrant ev = mypointer.pull();
 		TickTime ret=null;
 		double evts = ev.isreentrant()?Constants.INFTY:ev.getEvent().getTS();
 		if (sum <= evts) {
@@ -23,7 +23,7 @@ public class AtPosTickExpr implements ITickExpr {
 		}
 		// maybe update alarm with pulled event
 		if (evts < Constants.INFTY && !ev.getEvent().isnotick()) {
-			sum = evts + (double) ev.getEvent().getValue().get();
+			sum = evts + (double) ev.getEvent().getValue().getValue();
 		}
 		if (ret==null) { // Alarm didn't go off
 			ret = new TickTime(evts, true);

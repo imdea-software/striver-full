@@ -1,7 +1,8 @@
 package spec.valueexp;
 
-import java.util.Optional;
 import java.util.Random;
+
+import adts.MaybeNotick;
 
 public class RandomPosIntExpr implements IValExpr<Double> {
 
@@ -10,9 +11,9 @@ public class RandomPosIntExpr implements IValExpr<Double> {
 	private double rangeMax = 6d;
 
 	@Override
-	public Optional<Double> calculateValueAt(double nt) {
+	public MaybeNotick<Double> calculateValueAt(double nt) {
 		double ran = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
-		return Optional.of(ran);
+		return MaybeNotick.of(ran);
 	}
 
 }

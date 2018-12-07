@@ -3,7 +3,7 @@ package spec.valueexp.generics;
 import java.util.Optional;
 
 import adts.Constants;
-import adts.ExtEvent;
+import adts.MaybeReentrant;
 import adts.MaybeOutside;
 import adts.StriverEvent;
 import semop.Pointer;
@@ -36,7 +36,7 @@ public class GenericPrev<T> {
 			if (headv.isPresent()) {
 				lastret = MaybeOutside.of(headv.get());
 			}
-			ExtEvent extev = myPointer.pull();
+			MaybeReentrant extev = myPointer.pull();
 			if (!isEq && extev.isreentrant()) {
 				return lastret;
 			}

@@ -1,7 +1,7 @@
 package spec.tickexp;
 
 import adts.Constants;
-import adts.ExtEvent;
+import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
 
@@ -14,7 +14,7 @@ public class AtNegTickExpr implements ITickExpr {
 	@Override
 	public TickTime calculateNextTime() {
 		// WARNING: we assume that an event will be generated at some point
-		ExtEvent ev = null;
+		MaybeReentrant ev = null;
 		double evts;
 		do {
 			ev = mypointer.pull();
@@ -25,7 +25,7 @@ public class AtNegTickExpr implements ITickExpr {
 		if (evts == Constants.INFTY) {
 			return new TickTime(evts, true);
 		}
-		double sum = evts + (double) ev.getEvent().getValue().get();
+		double sum = evts + (double) ev.getEvent().getValue().getValue();
 		TickTime ret;
 		if (sum>=limit) {
 			ret = new TickTime(sum, false);

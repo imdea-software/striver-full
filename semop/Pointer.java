@@ -1,7 +1,8 @@
 package semop;
 
 import adts.Constants;
-import adts.ExtEvent;
+import adts.MaybeReentrant;
+import adts.StriverEvent;
 
 public class Pointer {
 	private double myPos = -1;
@@ -14,11 +15,11 @@ public class Pointer {
 		this.myStreamId=streamid;
 	}
 	
-	public ExtEvent pull() {
+	public MaybeReentrant pull() {
 		if (myPos == Constants.INFTY) {
-			return ExtEvent.outsideEv;
+			return MaybeReentrant.of(StriverEvent.posOutsideEv);
 		}
-		ExtEvent ev = t.getNext(myStreamId, myPos);
+		MaybeReentrant ev = t.getNext(myStreamId, myPos);
 		if (!ev.isreentrant()) {
 			myPos = ev.getEvent().getTS();
 		}

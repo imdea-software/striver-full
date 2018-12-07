@@ -1,12 +1,12 @@
 package spec.valueexp;
 
-import java.util.Optional;
+import adts.MaybeNotick;
 
 public class RandomNegIntExpr implements IValExpr<Double> {
 
 	@Override
-	public Optional<Double> calculateValueAt(double nt) {
-		return Optional.of(-5d);
+	public MaybeNotick<Double> calculateValueAt(double nt) {
+		return MaybeNotick.of(-5d);
 	}
 
 }

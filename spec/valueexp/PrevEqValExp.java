@@ -1,7 +1,7 @@
 package spec.valueexp;
 
-import java.util.Optional;
 
+import adts.MaybeNotick;
 import adts.MaybeOutside;
 import semop.Pointer;
 import spec.valueexp.generics.GenericPrev;
@@ -16,8 +16,8 @@ public class PrevEqValExp<T> implements IValExpr<MaybeOutside<T>> {
 	}
 
 	@Override
-	public Optional<MaybeOutside<T>> calculateValueAt(double t) {
-		return Optional.of(genericprev.getRes(t));
+	public MaybeNotick<MaybeOutside<T>> calculateValueAt(double t) {
+		return MaybeNotick.of(genericprev.getRes(t));
 	}
 
 }

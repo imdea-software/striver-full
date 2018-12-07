@@ -2,8 +2,10 @@ package spec.valueexp;
 
 import java.util.Optional;
 
+import adts.MaybeNotick;
+
 public interface IValExpr<T> {
 
-	Optional<T> calculateValueAt(double nt);
+	MaybeNotick<T> calculateValueAt(double nt);
 
 }

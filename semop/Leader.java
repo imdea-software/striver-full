@@ -3,12 +3,13 @@ package semop;
 import java.util.Optional;
 
 import adts.Constants;
+import adts.MaybeNotick;
 import adts.StriverEvent;
 import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
 import spec.valueexp.IValExpr;
 
-public class Leader<T> {
+public class Leader<T> implements ILeader<T> {
 	
 	// init these
 	private ITickExpr myTickExpr;
@@ -23,12 +24,12 @@ public class Leader<T> {
 		TickTime tickTime = myTickExpr.calculateNextTime();
 		double nt = tickTime.time;
 		if (nt == Constants.INFTY) {
-			return StriverEvent.outsideEv;
+			return StriverEvent.posOutsideEv;
 		}
 		if (tickTime.isnotick) {
-			return new StriverEvent(nt, Optional.empty());
+			return new StriverEvent(nt, MaybeNotick.notick());
 		}
-		Optional<Object> val = (Optional<Object>) myValExpr.calculateValueAt(nt);
+		MaybeNotick<Object> val = (MaybeNotick<Object>) myValExpr.calculateValueAt(nt);
 		return new StriverEvent(nt, val);
 	}
 

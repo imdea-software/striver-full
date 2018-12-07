@@ -1,7 +1,7 @@
 package spec.valueexp.generics;
 
 import adts.Constants;
-import adts.ExtEvent;
+import adts.MaybeReentrant;
 import adts.MaybeOutside;
 import adts.StriverEvent;
 import semop.Pointer;
@@ -36,7 +36,7 @@ public class GenericSucc<T> {
 		}
 		while (isEq?headt<t:headt<=t)
 		{
-			ExtEvent ev = myPointer.pull();
+			MaybeReentrant ev = myPointer.pull();
 			assert !ev.isreentrant();
 			StriverEvent strevent = ev.getEvent();
 			if (!strevent.isnotick()) {

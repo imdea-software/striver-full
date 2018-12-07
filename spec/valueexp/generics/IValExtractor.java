@@ -24,7 +24,7 @@ new IValExtractor() {
 					if (ev.isnotick()) {
 						return Optional.empty();
 					}
-					return Optional.of(ev.getValue().get());
+					return Optional.of(ev.getValue().getValue());
 				}
 			};
 }

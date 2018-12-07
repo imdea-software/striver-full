@@ -1,6 +1,6 @@
 package spec.tickexp;
 
-import adts.ExtEvent;
+import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
 
@@ -12,10 +12,10 @@ public class SrcTickExpr implements ITickExpr {
 	@Override
 	public TickTime calculateNextTime() {
 		//assert(mypointer.myPos <= lastpos);
-		ExtEvent ev = mypointer.pull();
+		MaybeReentrant ev = mypointer.pull();
 		assert !ev.isreentrant();
 		double ts = ev.getEvent().getTS();
-		return new TickTime(ts,!ev.getEvent().getValue().isPresent());
+		return new TickTime(ts,ev.getEvent().getValue().isnotick());
 	}
 	
 	public SrcTickExpr(Pointer p) {
