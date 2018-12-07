@@ -28,6 +28,10 @@ public class Pointer {
 	public String getStreamId() {
 		return this.myStreamId;
 	}
+
+	public void sendForward() {
+		this.myPos = Constants.INFTY;
+	}
 	
 
 }

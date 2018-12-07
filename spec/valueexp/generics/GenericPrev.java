@@ -1,4 +1,4 @@
-package spec.valueexp;
+package spec.valueexp.generics;
 
 import java.util.Optional;
 
@@ -10,10 +10,6 @@ import semop.Pointer;
 import spec.valueexp.tauexp.ITauExp;
 
 public class GenericPrev<T> {
-	
-	private interface IValExtractor<R> {
-		public Optional<R> extractValue(StriverEvent striverEvent);
-	}
 	
 	private MaybeOutside<T> lastret = MaybeOutside.negoutside();
 	private Double headt=-1d;
@@ -58,24 +54,8 @@ public class GenericPrev<T> {
 		this.innertau = it;
 		this.isEq = iseq;
 		this.extractor = isval?
-			new IValExtractor<T>() {
-				@Override
-				public Optional<T> extractValue(StriverEvent ev) {
-					if (ev.isnotick()) {
-						return Optional.empty();
-					}
-					return Optional.of((T) ev.getValue().get());
-				}
-			}:
-			new IValExtractor<T>() {
-				@Override
-				public Optional<T> extractValue(StriverEvent ev) {
-					if (ev.isnotick()) {
-						return Optional.empty();
-					}
-					return (Optional<T>) Optional.of(ev.getTS());
-				}
-			};
+				(IValExtractor<T>) IValExtractor.valueExtractor:
+				(IValExtractor<T>) IValExtractor.timeExtractor;
 	}
 
 }
