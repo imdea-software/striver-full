@@ -1,6 +1,5 @@
 package spec.valueexp.tauexp;
 
-import adts.MaybeNotick;
 import adts.MaybeOutside;
 import spec.valueexp.IValExpr;
 

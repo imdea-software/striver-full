@@ -1,7 +1,6 @@
 package spec.valueexp;
 
 
-import adts.MaybeNotick;
 import adts.MaybeOutside;
 import semop.Pointer;
 import spec.valueexp.generics.GenericPrev;

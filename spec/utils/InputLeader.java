@@ -8,16 +8,16 @@ import semop.ILeader;
 public class InputLeader<T> implements ILeader<T> {
 	
 	// init these
-	private List<StriverEvent<T>> values;
+	private List<StriverEvent> values;
 
-	public InputLeader(List<StriverEvent<T>> values) {
+	public InputLeader(List<StriverEvent> values) {
 		this.values = values;
 	}
 
 	@Override
-	public StriverEvent<T> getNext() {
+	public StriverEvent getNext() {
 		if (values.isEmpty()) {
-			return (StriverEvent<T>) StriverEvent.posOutsideEv;
+			return (StriverEvent) StriverEvent.posOutsideEv;
 		}
 		return values.remove(0);
 	}

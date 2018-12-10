@@ -1,9 +1,7 @@
 package spec.utils;
 
 
-import adts.MaybeNotick;
 import spec.utils.GeneralFun.Fun;
-import spec.valueexp.IValExpr;
 
 public class IfThenElse<T> implements Fun<T>{
 

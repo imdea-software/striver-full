@@ -1,6 +1,5 @@
 package spec.utils;
 
-import adts.MaybeNotick;
 import spec.valueexp.IValExpr;
 
 public class GeneralFun<T> implements IValExpr<T> {

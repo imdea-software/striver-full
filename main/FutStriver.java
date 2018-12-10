@@ -5,15 +5,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import adts.MaybeNotick;
-import adts.MaybeOutside;
 import adts.StriverEvent;
 import semop.ILeader;
 import semop.Leader;
 import semop.Pointer;
 import semop.Table;
 import spec.StriverSpec;
-import spec.tickexp.ConstTickExpr;
 import spec.tickexp.ITickExpr;
 import spec.tickexp.SrcTickExpr;
 import spec.utils.Default;
@@ -21,6 +18,7 @@ import spec.utils.GeneralFun;
 import spec.utils.InputLeader;
 import spec.utils.UnsafeAdd;
 import spec.valueexp.IValExpr;
+import spec.valueexp.PrevEqValExp;
 import spec.valueexp.PrevValExp;
 import spec.valueexp.tauexp.TExpr;
 
@@ -30,18 +28,18 @@ public class FutStriver {
 		Table theTable = new Table();
 		
 		// inputs:
-		List<StriverEvent<Integer>> values = new LinkedList<StriverEvent<Integer>>(Arrays.asList(
-				new StriverEvent<Integer>(10, MaybeNotick.of(10))
+		List<StriverEvent> values = new LinkedList<StriverEvent>(Arrays.asList(
+				new StriverEvent(10, 10)
 				));
 		InputLeader<Integer> i1leader = new InputLeader<Integer>(values);
 
-		values = new LinkedList<StriverEvent<Integer>>(Arrays.asList(
-				new StriverEvent<Integer>(0, MaybeNotick.of(0)),
-				new StriverEvent<Integer>(2, MaybeNotick.of(2)),
-				new StriverEvent<Integer>(4, MaybeNotick.of(4)),
-				new StriverEvent<Integer>(6, MaybeNotick.of(6)),
-				new StriverEvent<Integer>(8, MaybeNotick.of(8)),
-				new StriverEvent<Integer>(10, MaybeNotick.of(10))
+		values = new LinkedList<StriverEvent>(Arrays.asList(
+				new StriverEvent(0, 0),
+				new StriverEvent(2, 2),
+				new StriverEvent(4, 4),
+				new StriverEvent(6, 6),
+				new StriverEvent(8, 8),
+				new StriverEvent(10, 10)
 				));
 		InputLeader<Integer> i2leader = new InputLeader<Integer>(values);
 		
@@ -53,7 +51,7 @@ public class FutStriver {
 		Pointer prr = new Pointer(theTable, "r");
 		IValExpr<Integer> veint = new GeneralFun<Integer>(new UnsafeAdd(), 
 				new GeneralFun<Integer>(new Default<Integer>(0), new PrevValExp<>(prr, new TExpr())),
-				new GeneralFun<Integer>(new Default<Integer>(0),new PrevValExp<>(pri22, new TExpr()))
+				new PrevEqValExp<>(pri22, new TExpr())
 				);
 		Leader<Integer> rleader = new Leader<Integer>(new StriverSpec(te, veint, "r"));
 		
@@ -85,10 +83,10 @@ public class FutStriver {
 		// pointers
 		Pointer prout = new Pointer(theTable, "r");
 		Pointer pi1out = new Pointer(theTable, "in1");
-		List<Pointer> pointers = Arrays.asList(pi1out, prout);
+		List<Pointer> pointers = Arrays.asList(/*pi1out, */prout);
 		
 			for (Pointer p:pointers)
-		for (int i=0;i<10;i++)
+		for (int i=0;i<7;i++)
 				System.out.println(p.getStreamId() + " : "+p.pull());
     }
 

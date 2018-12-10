@@ -1,6 +1,5 @@
 package spec.utils;
 
-import adts.MaybeNotick;
 import spec.utils.GeneralFun.Fun;
 
 public class UnsafeAdd implements Fun<Integer>{

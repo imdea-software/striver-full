@@ -1,26 +1,26 @@
 package adts;
 
-public class MaybeReentrant<T> {
+public class MaybeReentrant {
 	
-    public static <T> MaybeReentrant<T> of(StriverEvent<T> value) {
+    public static  MaybeReentrant of(StriverEvent value) {
         if (value == null) {
             return MaybeReentrant.reentrantevent();
         }
 
-        return new MaybeReentrant<T>(value);
+        return new MaybeReentrant(value);
     }
 
-    public static <T> MaybeReentrant<T> reentrantevent() {
-        return new MaybeReentrant<T>(null);
+    public static  MaybeReentrant reentrantevent() {
+        return new MaybeReentrant(null);
     }
 
-    private final StriverEvent<T> value;
+    private final StriverEvent value;
 
-    private MaybeReentrant(StriverEvent<T> value) {
+    private MaybeReentrant(StriverEvent value) {
         this.value = value;
     }
 
-    public StriverEvent<T> getEvent() {
+    public StriverEvent getEvent() {
         return value;
     }
 

@@ -1,8 +1,8 @@
 package spec.valueexp.generics;
 
 import adts.Constants;
-import adts.MaybeReentrant;
 import adts.MaybeOutside;
+import adts.MaybeReentrant;
 import adts.StriverEvent;
 import semop.Pointer;
 import spec.valueexp.tauexp.ITauExp;

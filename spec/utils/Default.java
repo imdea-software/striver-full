@@ -1,6 +1,5 @@
 package spec.utils;
 
-import adts.MaybeNotick;
 import adts.MaybeOutside;
 import spec.utils.GeneralFun.Fun;
 

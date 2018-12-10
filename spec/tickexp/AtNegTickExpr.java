@@ -25,7 +25,7 @@ public class AtNegTickExpr implements ITickExpr {
 		if (evts == Constants.INFTY) {
 			return new TickTime(evts, true);
 		}
-		double sum = evts + (double) ev.getEvent().getValue().getValue();
+		double sum = evts + (double) ev.getEvent().getValue();
 		TickTime ret;
 		if (sum>=limit) {
 			ret = new TickTime(sum, false);

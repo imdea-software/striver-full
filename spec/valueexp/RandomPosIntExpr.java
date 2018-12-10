@@ -2,8 +2,6 @@ package spec.valueexp;
 
 import java.util.Random;
 
-import adts.MaybeNotick;
-
 public class RandomPosIntExpr implements IValExpr<Double> {
 
 	private	Random r = new Random();

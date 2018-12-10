@@ -1,9 +1,6 @@
 package semop;
 
-import java.util.Optional;
-
 import adts.Constants;
-import adts.MaybeNotick;
 import adts.StriverEvent;
 import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
@@ -27,9 +24,9 @@ public class Leader<T> implements ILeader<T> {
 			return StriverEvent.posOutsideEv;
 		}
 		if (tickTime.isnotick) {
-			return new StriverEvent(nt, MaybeNotick.notick());
+			return new StriverEvent(nt, Constants.notick());
 		}
-		MaybeNotick<Object> val = (MaybeNotick<Object>) myValExpr.calculateValueAt(nt);
+		Object val = myValExpr.calculateValueAt(nt);
 		return new StriverEvent(nt, val);
 	}
 

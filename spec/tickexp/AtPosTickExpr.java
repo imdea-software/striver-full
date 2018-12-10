@@ -23,7 +23,7 @@ public class AtPosTickExpr implements ITickExpr {
 		}
 		// maybe update alarm with pulled event
 		if (evts < Constants.INFTY && !ev.getEvent().isnotick()) {
-			sum = evts + (double) ev.getEvent().getValue().getValue();
+			sum = evts + (double) ev.getEvent().getValue();
 		}
 		if (ret==null) { // Alarm didn't go off
 			ret = new TickTime(evts, true);

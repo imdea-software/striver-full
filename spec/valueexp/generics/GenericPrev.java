@@ -3,9 +3,8 @@ package spec.valueexp.generics;
 import java.util.Optional;
 
 import adts.Constants;
-import adts.MaybeReentrant;
 import adts.MaybeOutside;
-import adts.StriverEvent;
+import adts.MaybeReentrant;
 import semop.Pointer;
 import spec.valueexp.tauexp.ITauExp;
 

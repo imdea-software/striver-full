@@ -1,7 +1,6 @@
 package spec.utils;
 
 
-import adts.MaybeNotick;
 import spec.utils.GeneralFun.Fun;
 
 public class EqFun implements Fun<Boolean>{

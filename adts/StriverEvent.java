@@ -1,14 +1,12 @@
 package adts;
 
-import java.util.Optional;
-
-public class StriverEvent<T> {
+public class StriverEvent {
 	
-	public static final StriverEvent<?> posOutsideEv = new StriverEvent(Constants.INFTY, MaybeNotick.notick());
+	public static final StriverEvent posOutsideEv = new StriverEvent(Constants.INFTY, Constants.notick());
 	private double ts;
-	private MaybeNotick<T> value;
+	private Object value;
 
-	public StriverEvent(double nt, MaybeNotick<T> object) {
+	public StriverEvent(double nt, Object object) {
 		this.ts = nt;
 		this.value = object;
 	}
@@ -17,12 +15,12 @@ public class StriverEvent<T> {
 		return ts;
 	}
 	
-	public MaybeNotick<T> getValue() {
+	public Object getValue() {
 		return value;
 	}
 	
 	public boolean isnotick() {
-		return value.isnotick();
+		return Constants.isnotick(value);
 	}
 	
 	public String toString() {
