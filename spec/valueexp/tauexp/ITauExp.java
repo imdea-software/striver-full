@@ -1,13 +1,12 @@
 package spec.valueexp.tauexp;
 
-import adts.MaybeOutside;
 import spec.valueexp.IValExpr;
 
-public abstract class ITauExp implements IValExpr<MaybeOutside<Double>> {
+public abstract class ITauExp implements IValExpr<Object> {
 	
-	public abstract MaybeOutside<Double> getT(double t);
+	public abstract Object getT(double t);
 	
-	public MaybeOutside<Double> calculateValueAt(double t) {
+	public Object calculateValueAt(double t) {
 		return getT(t);
 	}
 

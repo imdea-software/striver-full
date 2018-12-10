@@ -1,7 +1,6 @@
 package spec.valueexp.generics;
 
 import adts.Constants;
-import adts.MaybeOutside;
 import adts.MaybeReentrant;
 import adts.StriverEvent;
 import semop.Pointer;
@@ -17,14 +16,14 @@ public class GenericSucc<T> {
 	private boolean isEq=false;
 	private IValExtractor<T> extractor;
 
-	public MaybeOutside<T> getRes(double t) {
+	public Object getRes(double t) {
 		if (headt == Constants.INFTY) {
-			return MaybeOutside.posoutside();
+			return Constants.posoutside();
 		}
-		MaybeOutside<Double> mt = innertau.getT(t);
-		switch (mt.getType()) {
+		Object mt = innertau.getT(t);
+		switch (Constants.getOutsideType(mt)) {
 			case inside:
-				t = mt.get();
+				t = (double) mt;
 				break;
 			case negoutside:
 				t = -1;
@@ -32,7 +31,7 @@ public class GenericSucc<T> {
 			case posoutside:
 				myPointer.sendForward();
 				headt = Constants.INFTY;
-				return MaybeOutside.posoutside();
+				return Constants.posoutside();
 		}
 		while (isEq?headt<t:headt<=t)
 		{
@@ -45,10 +44,10 @@ public class GenericSucc<T> {
 			}
 			if (strevent.getTS()==Constants.INFTY) {
 				headt = Constants.INFTY;
-				return MaybeOutside.posoutside();
+				return Constants.posoutside();
 			}
 		}
-		return MaybeOutside.of(headv);
+		return headv;
 	}
 
 	public GenericSucc(Pointer p, ITauExp it, boolean iseq, boolean isval) {

@@ -1,6 +1,5 @@
 package spec.valueexp.tauexp;
 
-import adts.MaybeOutside;
 import semop.Pointer;
 import spec.valueexp.generics.GenericPrev;
 
@@ -13,7 +12,7 @@ public class PrevExp extends ITauExp {
 	}
 
 	@Override
-	public MaybeOutside<Double> getT(double t) {
+	public Object getT(double t) {
 		return genericprev.getRes(t);
 	}
 

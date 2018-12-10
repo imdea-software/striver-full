@@ -1,6 +1,6 @@
 package spec.utils;
 
-import adts.MaybeOutside;
+import adts.Constants;
 import spec.utils.GeneralFun.Fun;
 
 public class Default<T> implements Fun<T>{
@@ -9,8 +9,8 @@ public class Default<T> implements Fun<T>{
 
 	@Override
 	public T apply(Object... args) {
-		MaybeOutside<T> arg = ((MaybeOutside<T>) args[0]);
-		return arg.getType()!=MaybeOutside.Valtype.inside?defVal:arg.get();
+		Object arg = ((Object) args[0]);
+		return Constants.getOutsideType(arg)!=Constants.OutsideType.inside?defVal:(T) arg;
 	}
 	
 	public Default(T defV) {

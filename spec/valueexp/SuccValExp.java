@@ -1,11 +1,10 @@
 package spec.valueexp;
 
-import adts.MaybeOutside;
 import semop.Pointer;
 import spec.valueexp.generics.GenericSucc;
 import spec.valueexp.tauexp.ITauExp;
 
-public class SuccValExp<T> implements IValExpr<MaybeOutside<T>> {
+public class SuccValExp<T> implements IValExpr<Object> {
 	
 	private GenericSucc<T> genericsucc;
 
@@ -14,7 +13,7 @@ public class SuccValExp<T> implements IValExpr<MaybeOutside<T>> {
 	}
 
 	@Override
-	public MaybeOutside<T> calculateValueAt(double t) {
+	public Object calculateValueAt(double t) {
 		return genericsucc.getRes(t);
 	}
 

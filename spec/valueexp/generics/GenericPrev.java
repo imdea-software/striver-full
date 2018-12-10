@@ -3,14 +3,13 @@ package spec.valueexp.generics;
 import java.util.Optional;
 
 import adts.Constants;
-import adts.MaybeOutside;
 import adts.MaybeReentrant;
 import semop.Pointer;
 import spec.valueexp.tauexp.ITauExp;
 
 public class GenericPrev<T> {
 	
-	private MaybeOutside<T> lastret = MaybeOutside.negoutside();
+	private Object lastret = Constants.negoutside();
 	private Double headt=-1d;
 	private Optional<T> headv = Optional.empty();
 	// init these
@@ -19,11 +18,11 @@ public class GenericPrev<T> {
 	private boolean isEq;
 	private IValExtractor<T> extractor;
 
-	public MaybeOutside<T> getRes(double t) {
-		MaybeOutside<Double> mt = innertau.getT(t);
-		switch (mt.getType()) {
+	public Object getRes(double t) {
+		Object mt = innertau.getT(t);
+		switch (Constants.getOutsideType(mt)) {
 			case inside:
-				t = mt.get();
+				t = (double) mt;
 				break;
 			case negoutside:
 				t = -1;
@@ -33,7 +32,7 @@ public class GenericPrev<T> {
 		}
 		while (headt<t) {
 			if (headv.isPresent()) {
-				lastret = MaybeOutside.of(headv.get());
+				lastret = headv.get();
 			}
 			MaybeReentrant extev = myPointer.pull();
 			if (!isEq && extev.isreentrant()) {
@@ -43,7 +42,7 @@ public class GenericPrev<T> {
 			headv = extractor.extractValue(extev.getEvent());
 		}
 		if (isEq && headt==t && headv.isPresent()) {
-			lastret = MaybeOutside.of(headv.get());
+			lastret = headv.get();
 		}
 		return lastret;
 	}

@@ -1,12 +1,11 @@
 package spec.valueexp;
 
 
-import adts.MaybeOutside;
 import semop.Pointer;
 import spec.valueexp.generics.GenericPrev;
 import spec.valueexp.tauexp.ITauExp;
 
-public class PrevValExp<T> implements IValExpr<MaybeOutside<T>> {
+public class PrevValExp<T> implements IValExpr<Object> {
 	
 	private GenericPrev<T> genericprev;
 
@@ -15,7 +14,7 @@ public class PrevValExp<T> implements IValExpr<MaybeOutside<T>> {
 	}
 
 	@Override
-	public MaybeOutside<T> calculateValueAt(double t) {
+	public Object calculateValueAt(double t) {
 		return genericprev.getRes(t);
 	}
 
