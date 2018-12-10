@@ -12,8 +12,8 @@ public class Table {
 	
 	private HashSet<String> resolving = new HashSet<String>();
 	// init these:
-	private HashMap<String, LinkedList<StriverEvent>> theTable;
-	private HashMap<String, ILeader> leaders;
+	private HashMap<String, LinkedList<StriverEvent>> theTable = new HashMap<>();;
+	private HashMap<String, ILeader<?>> leaders = new HashMap<>();
 	
 	public MaybeReentrant getNext(String streamid, double myPos) {
 		LinkedList<StriverEvent> themap = theTable.get(streamid);
@@ -39,13 +39,9 @@ public class Table {
 		return MaybeReentrant.of(ev);
 	}
 	
-	public void setLeaders(HashMap<String, ILeader> leadersMap) {
-		theTable = new HashMap<>();
-		this.leaders = leadersMap;
-		for (String s:leaders.keySet()) {
-			theTable.put(s, new LinkedList<>());
-		}
-		
+	public void setLeader(ILeader<?> inputLeader, String streamid) {
+		theTable.put(streamid, new LinkedList<>());
+		leaders.put(streamid, inputLeader);
 	}
 
 }

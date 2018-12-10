@@ -1,14 +1,13 @@
 package main;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import adts.StriverEvent;
-import semop.ILeader;
 import semop.Leader;
 import semop.Pointer;
+import semop.PointerFactory;
 import semop.Table;
 import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
@@ -27,12 +26,13 @@ public class FutStriver {
 
     public static void main(String[] args) {
 		Table theTable = new Table();
+		PointerFactory pfactory = new PointerFactory(theTable);
 		
 		// inputs:
 		List<StriverEvent> values = new LinkedList<StriverEvent>(Arrays.asList(
 				new StriverEvent(10, 10)
 				));
-		InputLeader<Integer> i1leader = new InputLeader<Integer>(values);
+		theTable.setLeader(new InputLeader<Integer>(values), "in1");
 
 		values = new LinkedList<StriverEvent>(Arrays.asList(
 				new StriverEvent(0, 0),
@@ -42,36 +42,36 @@ public class FutStriver {
 				new StriverEvent(8, 8),
 				new StriverEvent(10, 10)
 				));
-		InputLeader<Integer> i2leader = new InputLeader<Integer>(values);
+		theTable.setLeader(new InputLeader<Integer>(values), "in2");
 		
 		// outputs:
 		// r:
-		Pointer pri21 = new Pointer(theTable, "in2");
-		ITickExpr te = new SrcTickExpr(pri21);
-		Pointer pri22 = new Pointer(theTable, "in2");
-		Pointer prr = new Pointer(theTable, "r");
+		Pointer p = pfactory.getPointer("in2");
+		ITickExpr te = new SrcTickExpr(p);
+		Pointer pri2 = pfactory.getPointer("in2");
+		Pointer prr = pfactory.getPointer("r");
 		IValExpr<Integer> veint = new GeneralFun<Integer>(new UnsafeAdd(), 
 				new GeneralFun<Integer>(new Default<Integer>(0), new PrevValExp<>(prr, new TExpr())),
-				new PrevEqValExp<>(pri22, new TExpr())
+				new PrevEqValExp<>(pri2, new TExpr())
 				);
-		Leader<Integer> rleader = new Leader<Integer>(new StriverSpec(te, veint, "r"));
+		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "r");
 		
 		// x:
-		Pointer pxi1 = new Pointer(theTable, "in1");
-		te = new SrcTickExpr(pxi1);
-		Pointer pxr = new Pointer(theTable, "r");
-		veint = new PrevEqValExp<Integer>(pxr, new TExpr());
-		Leader<Integer> xleader = new Leader<Integer>(new StriverSpec(te, veint, "x"));
+		p = pfactory.getPointer("in1");
+		te = new SrcTickExpr(p);
+		p = pfactory.getPointer("r");
+		veint = new PrevEqValExp<Integer>(p, new TExpr());
+		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "x");
 		
 		// s:
-		Pointer psr1 = new Pointer(theTable, "r");
-		te = new SrcTickExpr(psr1);
-		Pointer psr2 = new Pointer(theTable, "r");
-		Pointer psx = new Pointer(theTable, "x");
+		p = pfactory.getPointer("r");
+		te = new SrcTickExpr(p);
+		Pointer psr = pfactory.getPointer("r");
+		Pointer psx = pfactory.getPointer("x");
 		veint = new GeneralFun<Integer>(new UnsafeAdd(), 
-				new PrevEqValExp<>(psr2, new TExpr()),
+				new PrevEqValExp<>(psr, new TExpr()),
 				new SuccEqValExp<>(psx, new TExpr()));
-		Leader<Integer> sleader = new Leader<Integer>(new StriverSpec(te, veint, "s"));
+		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "s");
 		
 		/*
          input int in1, in2
@@ -93,25 +93,15 @@ public class FutStriver {
 	 	 s = [(0, 30), (2,32), (4, 36), (6, 42), (8, 50), (10, 60),...]
 		 */
 		
-		// table
-		HashMap<String, ILeader> leadersMap = new HashMap<>();
-		leadersMap.put("in1", i1leader);
-		leadersMap.put("in2", i2leader);
-		leadersMap.put("r", rleader);
-		leadersMap.put("x", xleader);
-		leadersMap.put("s", sleader);
-		theTable.setLeaders(leadersMap);
-		
 		// pointers
-		Pointer prout = new Pointer(theTable, "r");
-		Pointer pxout = new Pointer(theTable, "x");
-		Pointer psout = new Pointer(theTable, "s");
-		Pointer pi1out = new Pointer(theTable, "in1");
-		List<Pointer> pointers = Arrays.asList(/*pi1out, */prout, pxout, psout);
+		Pointer prout = pfactory.getPointer("r");
+		Pointer pxout = pfactory.getPointer("x");
+		Pointer psout = pfactory.getPointer("s");
+		List<Pointer> pointers = Arrays.asList(prout, pxout, psout);
 		
-			for (Pointer p:pointers)
+			for (Pointer pointer:pointers)
 		for (int i=0;i<7;i++)
-				System.out.println(p.getStreamId() + " : "+p.pull());
+				System.out.println(pointer.getStreamId() + " : "+pointer.pull());
     }
 
 }

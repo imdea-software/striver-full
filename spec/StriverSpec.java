@@ -8,12 +8,10 @@ public class StriverSpec {
 	// init these
 	private ITickExpr myTickExpr;
 	private IValExpr myValExpr;
-	private String streamid;
 	
-	public StriverSpec(ITickExpr te, IValExpr ve, String streamid) {
+	public StriverSpec(ITickExpr te, IValExpr ve) {
 		this.myTickExpr = te;
 		this.myValExpr = ve;
-		this.streamid = streamid;
 	}
 
 	public IValExpr getValExpr() {
