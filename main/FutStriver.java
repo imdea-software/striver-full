@@ -20,6 +20,7 @@ import spec.utils.UnsafeAdd;
 import spec.valueexp.IValExpr;
 import spec.valueexp.PrevEqValExp;
 import spec.valueexp.PrevValExp;
+import spec.valueexp.SuccEqValExp;
 import spec.valueexp.tauexp.TExpr;
 
 public class FutStriver {
@@ -55,6 +56,22 @@ public class FutStriver {
 				);
 		Leader<Integer> rleader = new Leader<Integer>(new StriverSpec(te, veint, "r"));
 		
+		// x:
+		Pointer pxi1 = new Pointer(theTable, "in1");
+		te = new SrcTickExpr(pxi1);
+		Pointer pxr = new Pointer(theTable, "r");
+		veint = new PrevEqValExp<Integer>(pxr, new TExpr());
+		Leader<Integer> xleader = new Leader<Integer>(new StriverSpec(te, veint, "x"));
+		
+		// s:
+		Pointer psr1 = new Pointer(theTable, "r");
+		te = new SrcTickExpr(psr1);
+		Pointer psr2 = new Pointer(theTable, "r");
+		Pointer psx = new Pointer(theTable, "x");
+		veint = new GeneralFun<Integer>(new UnsafeAdd(), 
+				new PrevEqValExp<>(psr2, new TExpr()),
+				new SuccEqValExp<>(psx, new TExpr()));
+		Leader<Integer> sleader = new Leader<Integer>(new StriverSpec(te, veint, "s"));
 		
 		/*
          input int in1, in2
@@ -71,6 +88,9 @@ public class FutStriver {
    
          in2 = [(0,0), (2,2), (4,4), (6,6), (8,8),...]
          in1 = [(10, 10)]
+         r = [(0, 0), (2,2), (4, 6), (6, 12), (8, 20), (10, 30),...]
+		 x = [(10, 30)]
+	 	 s = [(0, 30), (2,32), (4, 36), (6, 42), (8, 50), (10, 60),...]
 		 */
 		
 		// table
@@ -78,12 +98,16 @@ public class FutStriver {
 		leadersMap.put("in1", i1leader);
 		leadersMap.put("in2", i2leader);
 		leadersMap.put("r", rleader);
+		leadersMap.put("x", xleader);
+		leadersMap.put("s", sleader);
 		theTable.setLeaders(leadersMap);
 		
 		// pointers
 		Pointer prout = new Pointer(theTable, "r");
+		Pointer pxout = new Pointer(theTable, "x");
+		Pointer psout = new Pointer(theTable, "s");
 		Pointer pi1out = new Pointer(theTable, "in1");
-		List<Pointer> pointers = Arrays.asList(/*pi1out, */prout);
+		List<Pointer> pointers = Arrays.asList(/*pi1out, */prout, pxout, psout);
 		
 			for (Pointer p:pointers)
 		for (int i=0;i<7;i++)

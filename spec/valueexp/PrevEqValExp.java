@@ -5,7 +5,7 @@ import semop.Pointer;
 import spec.valueexp.generics.GenericPrev;
 import spec.valueexp.tauexp.ITauExp;
 
-public class PrevEqValExp<T> implements IValExpr<Object> {
+public class PrevEqValExp<T> implements IValExpr<T> {
 	
 	private GenericPrev<T> genericprev;
 
@@ -14,8 +14,8 @@ public class PrevEqValExp<T> implements IValExpr<Object> {
 	}
 
 	@Override
-	public Object calculateValueAt(double t) {
-		return genericprev.getRes(t);
+	public T calculateValueAt(double t) {
+		return (T) genericprev.getRes(t);
 	}
 
 }
