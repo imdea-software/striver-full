@@ -8,8 +8,8 @@ import spec.valueexp.IValExpr;
 public class IfThenElse<T> implements Fun<T>{
 
 	@Override
-	public MaybeNotick<T> apply(MaybeNotick<?>... args) {
-		return (Boolean) args[0].getValue()?(MaybeNotick<T>) args[1]:(MaybeNotick<T>) args[2];
+	public T apply(Object... args) {
+		return (Boolean) args[0]?(T) args[1]:(T) args[2];
 	}
 
 }

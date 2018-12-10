@@ -11,9 +11,9 @@ public class RandomPosIntExpr implements IValExpr<Double> {
 	private double rangeMax = 6d;
 
 	@Override
-	public MaybeNotick<Double> calculateValueAt(double nt) {
+	public Double calculateValueAt(double nt) {
 		double ran = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
-		return MaybeNotick.of(ran);
+		return ran;
 	}
 
 }

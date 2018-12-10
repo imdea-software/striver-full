@@ -1,22 +1,20 @@
 package spec.utils;
 
-import java.util.Optional;
-
 import adts.MaybeNotick;
 import spec.valueexp.IValExpr;
 
 public class GeneralFun<T> implements IValExpr<T> {
 
 	public interface Fun<T> {
-		MaybeNotick<T> apply(MaybeNotick<?>... args);
+        T apply(Object... args);
 	}
 
 	private IValExpr<?>[] exprs;
 	private Fun<T> fun;
 
 	@Override
-	public MaybeNotick<T> calculateValueAt(double nt) {
-		MaybeNotick<?>[] args = new MaybeNotick<?>[exprs.length];
+	public T calculateValueAt(double nt) {
+		Object[] args = new Object[exprs.length];
 		int i=0;
 		for (IValExpr<?> expr : exprs) {
 			args[i] = expr.calculateValueAt(nt);

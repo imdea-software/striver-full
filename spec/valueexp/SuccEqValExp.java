@@ -15,8 +15,8 @@ public class SuccEqValExp<T> implements IValExpr<MaybeOutside<T>> {
 	}
 
 	@Override
-	public MaybeNotick<MaybeOutside<T>> calculateValueAt(double t) {
-		return MaybeNotick.of(genericsucc.getRes(t));
+	public MaybeOutside<T> calculateValueAt(double t) {
+		return genericsucc.getRes(t);
 	}
 
 }

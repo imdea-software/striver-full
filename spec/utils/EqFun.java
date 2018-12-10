@@ -7,8 +7,8 @@ import spec.utils.GeneralFun.Fun;
 public class EqFun implements Fun<Boolean>{
 
 	@Override
-	public MaybeNotick<Boolean> apply(MaybeNotick<?>... args) {
-		return MaybeNotick.of(args[0].equals(args[1]));
+	public Boolean apply(Object... args) {
+		return args[0].equals(args[1]);
 	}
 
 }
