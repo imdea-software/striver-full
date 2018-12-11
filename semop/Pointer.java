@@ -1,14 +1,12 @@
 package semop;
 
-import java.util.Iterator;
-
 import adts.Constants;
 import adts.MaybeReentrant;
 import adts.StriverEvent;
 import adts.GCList.GCIterator;
 
 public class Pointer {
-	private boolean outsidepos = false;
+	private MaybeReentrant quickreturn=null;
 	// init these:
 	private Table t;
 	private String myStreamId;
@@ -22,8 +20,8 @@ public class Pointer {
 	}
 	
 	public MaybeReentrant pull() {
-		if (outsidepos) {
-			return MaybeReentrant.of(StriverEvent.posOutsideEv);
+		if (quickreturn != null) {
+			return quickreturn;
 		}
 		StriverEvent ev;
 		if (!myIterator.hasNext()) {
@@ -44,7 +42,7 @@ public class Pointer {
 
 	public void sendForward() {
 		myIterator.unhook();
-		this.outsidepos = true;
+		this.quickreturn = MaybeReentrant.of(StriverEvent.posOutsideEv);
 	}
 	
 
