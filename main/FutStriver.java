@@ -5,11 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import adts.StriverEvent;
-import adts.GCList.GCIterator;
-import adts.GCList.GCLinkedList;
 import semop.Leader;
 import semop.Pointer;
-import semop.PointerFactory;
 import semop.Table;
 import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
@@ -49,7 +46,6 @@ public class FutStriver {
     	
     	
 		Table theTable = new Table();
-		PointerFactory pfactory = new PointerFactory(theTable);
 		
 		// inputs:
 		List<StriverEvent> values = new LinkedList<StriverEvent>(Arrays.asList(
@@ -69,10 +65,10 @@ public class FutStriver {
 		
 		// outputs:
 		// r:
-		Pointer p = pfactory.getPointer("in2");
+		Pointer p = theTable.getPointer("in2");
 		ITickExpr te = new SrcTickExpr(p);
-		Pointer pri2 = pfactory.getPointer("in2");
-		Pointer prr = pfactory.getPointer("r");
+		Pointer pri2 = theTable.getPointer("in2");
+		Pointer prr = theTable.getPointer("r");
 		IValExpr<Integer> veint = new GeneralFun<Integer>(new UnsafeAdd(), 
 				new GeneralFun<Integer>(new Default<Integer>(0), new PrevValExp<>(prr, new TExpr())),
 				new PrevEqValExp<>(pri2, new TExpr())
@@ -80,17 +76,17 @@ public class FutStriver {
 		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "r");
 		
 		// x:
-		p = pfactory.getPointer("in1");
+		p = theTable.getPointer("in1");
 		te = new SrcTickExpr(p);
-		p = pfactory.getPointer("r");
+		p = theTable.getPointer("r");
 		veint = new PrevEqValExp<Integer>(p, new TExpr());
 		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "x");
 		
 		// s:
-		p = pfactory.getPointer("r");
+		p = theTable.getPointer("r");
 		te = new SrcTickExpr(p);
-		Pointer psr = pfactory.getPointer("r");
-		Pointer psx = pfactory.getPointer("x");
+		Pointer psr = theTable.getPointer("r");
+		Pointer psx = theTable.getPointer("x");
 		veint = new GeneralFun<Integer>(new UnsafeAdd(), 
 				new PrevEqValExp<>(psr, new TExpr()),
 				new SuccEqValExp<>(psx, new TExpr()));
@@ -117,13 +113,13 @@ public class FutStriver {
 		 */
 		
 		// pointers
-		Pointer prout = pfactory.getPointer("r");
-		Pointer pxout = pfactory.getPointer("x");
-		Pointer psout = pfactory.getPointer("s");
+		Pointer prout = theTable.getPointer("r");
+		Pointer pxout = theTable.getPointer("x");
+		Pointer psout = theTable.getPointer("s");
 		List<Pointer> pointers = Arrays.asList(prout, pxout, psout);
 		
 			for (Pointer pointer:pointers)
-		for (int i=0;i<7;i++)
+		for (int i=0;i<17;i++)
 				System.out.println(pointer.getStreamId() + " : "+pointer.pull());
     }
 

@@ -17,7 +17,6 @@ public class GCIterator<T> implements Iterator<T>{
 
 	@Override
 	public T next() {
-		assert (hasNext());
 		pnext = pnext.getNext();
 		return pnext.getVal();
 	}

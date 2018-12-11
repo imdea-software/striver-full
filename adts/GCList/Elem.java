@@ -4,7 +4,6 @@ class Elem<T> {
 
 	private T val=null;
 	private Elem<T> next;
-	private boolean real;
 
 	public T getVal() {
 		return this.val;
@@ -20,13 +19,5 @@ class Elem<T> {
 
 	public void setNext(Elem<T> nxt) {
 		this.next = nxt;
-	}
-
-	public boolean isReal() {
-		return real;
-	}
-
-	public void setReal(boolean real) {
-		this.real = real;
 	}
 }
