@@ -35,4 +35,9 @@ public class AtPosTickExpr implements ITickExpr {
 		this.mypointer = p;
 	}
 
+	@Override
+	public void unhookPointers() {
+		mypointer.sendForward();
+	}
+
 }

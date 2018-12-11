@@ -23,4 +23,9 @@ public class SrcTickExpr implements ITickExpr {
 		this.mypointer = p;
 	}
 
+	@Override
+	public void unhookPointers() {
+		mypointer.sendForward();
+	}
+
 }

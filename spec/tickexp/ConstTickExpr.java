@@ -20,6 +20,10 @@ public class ConstTickExpr implements ITickExpr {
 		}
 		return new TickTime(Constants.INFTY, false);
 	}
+
+	@Override
+	public void unhookPointers() {
+	}
 	
 
 }

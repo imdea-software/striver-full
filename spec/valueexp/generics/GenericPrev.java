@@ -56,4 +56,9 @@ public class GenericPrev<T> {
 				(IValExtractor<T>) IValExtractor.timeExtractor;
 	}
 
+	public void unhookPointers() {
+		this.myPointer.sendForward();
+		this.innertau.unhookPointers();
+	}
+
 }

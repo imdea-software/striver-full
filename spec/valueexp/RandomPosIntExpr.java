@@ -14,4 +14,8 @@ public class RandomPosIntExpr implements IValExpr<Double> {
 		return ran;
 	}
 
+	@Override
+	public void unhookPointers() {
+	}
+
 }

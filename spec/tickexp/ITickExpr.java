@@ -6,4 +6,6 @@ public interface ITickExpr {
 
 	TickTime calculateNextTime();
 
+	void unhookPointers();
+
 }

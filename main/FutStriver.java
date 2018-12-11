@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import adts.StriverEvent;
+import semop.ILeader;
 import semop.Leader;
 import semop.Pointer;
 import semop.Table;
@@ -61,7 +62,16 @@ public class FutStriver {
 				new StriverEvent(8, 8),
 				new StriverEvent(10, 10)
 				));
-		theTable.setLeader(new InputLeader<Integer>(values), "in2");
+		//theTable.setLeader(new InputLeader<Integer>(values), "in2");
+		theTable.setLeader(new ILeader<Integer>() {
+
+			int nxt = 0;
+			@Override
+			public StriverEvent getNext() {
+				return new StriverEvent(nxt, nxt++);
+			}
+			
+		}, "in2");
 		
 		// outputs:
 		// r:
@@ -86,7 +96,7 @@ public class FutStriver {
 		p = theTable.getPointer("r");
 		te = new SrcTickExpr(p);
 		Pointer psr = theTable.getPointer("r");
-		Pointer psx = theTable.getPointer("x");
+		Pointer psx = theTable.getPointer("r");
 		veint = new GeneralFun<Integer>(new UnsafeAdd(), 
 				new PrevEqValExp<>(psr, new TExpr()),
 				new SuccEqValExp<>(psx, new TExpr()));
@@ -118,9 +128,21 @@ public class FutStriver {
 		Pointer psout = theTable.getPointer("s");
 		List<Pointer> pointers = Arrays.asList(prout, pxout, psout);
 		
-		for (Pointer pointer:pointers)
-			for (int i=0;i<17;i++)
-				System.out.println(pointer.getStreamId() + " : "+pointer.pull());
+		long lastReport = System.currentTimeMillis();
+		while (true) {
+			long now = System.currentTimeMillis();
+			if (now - lastReport > 4000) {
+			  /* Total amount of free memory available to the JVM */
+			  //System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+				for (Pointer pointer:theTable.pointers) {
+					System.out.println("Pointer " + pointer.hashCode() + " for stream " +pointer.getStreamId() + " next val: " +pointer.myIterator.pnext);
+				}
+					System.out.println("-----------------------");
+			  lastReport = now;
+			}
+			for (Pointer pointer:pointers)
+				pointer.pull();
+		}
     }
 
 }

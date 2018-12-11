@@ -12,7 +12,8 @@ public class Pointer {
 	// init these:
 	private Table t;
 	private String myStreamId;
-	private GCIterator<StriverEvent> myIterator;
+	// public for debug:
+	public GCIterator<StriverEvent> myIterator;
 	
 	public Pointer(Table t, String streamid, GCIterator<StriverEvent> iterator) {
 		this.t=t;
@@ -33,7 +34,7 @@ public class Pointer {
 		}
 		ev = myIterator.next();
 		if (ev.getTS() == Constants.INFTY)
-			outsidepos=true;
+			sendForward();
 		return MaybeReentrant.of(ev);
 	}
 

@@ -16,4 +16,9 @@ public class SuccEqExp extends ITauExp {
 		return genericsucc.getRes(t);
 	}
 
+	@Override
+	public void unhookPointers() {
+		genericsucc.unhookPointers();
+	}
+
 }

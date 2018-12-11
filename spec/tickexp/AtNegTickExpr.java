@@ -40,4 +40,9 @@ public class AtNegTickExpr implements ITickExpr {
 		this.mypointer = p;
 	}
 
+	@Override
+	public void unhookPointers() {
+		mypointer.sendForward();
+	}
+
 }

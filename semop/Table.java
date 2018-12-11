@@ -3,7 +3,6 @@ package semop;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import adts.MaybeReentrant;
 import adts.StriverEvent;
 import adts.GCList.GCIterator;
 import adts.GCList.GCLinkedList;
@@ -14,6 +13,8 @@ public class Table {
 	// init these:
 	private HashMap<String, GCLinkedList<StriverEvent>> theTable = new HashMap<>();
 	private HashMap<String, ILeader<?>> leaders = new HashMap<>();
+	// for debug:
+	public HashSet<Pointer> pointers = new HashSet<>();
 	
 	public boolean getNext(String streamid) {
 		// Calculate it:
@@ -43,7 +44,9 @@ public class Table {
 			theTable.put(stream, thelist);
 		}
 		GCIterator<StriverEvent> iterator = thelist.iterator();
-		return new Pointer(this, stream, iterator);
+		Pointer ret = new Pointer(this, stream, iterator);
+		pointers.add(ret);
+		return ret;
 	}
 
 }

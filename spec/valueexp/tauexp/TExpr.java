@@ -7,4 +7,8 @@ public class TExpr extends ITauExp {
 		return t;
 	}
 
+	@Override
+	public void unhookPointers() {
+	}
+
 }

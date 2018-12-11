@@ -17,4 +17,9 @@ public class SuccEqValExp<T> implements IValExpr<Object> {
 		return genericsucc.getRes(t);
 	}
 
+	@Override
+	public void unhookPointers() {
+		genericsucc.unhookPointers();
+	}
+
 }

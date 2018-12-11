@@ -53,4 +53,10 @@ public class UnionTickExpr implements ITickExpr {
 		this.leftExpr = leftExpr;
 		this.rightExpr = rightExpr;
 	}
+
+	@Override
+	public void unhookPointers() {
+		leftExpr.unhookPointers();
+		rightExpr.unhookPointers();
+	}
 }

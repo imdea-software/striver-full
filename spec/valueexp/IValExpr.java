@@ -4,4 +4,6 @@ public interface IValExpr<T> {
 
 	T calculateValueAt(double nt);
 
+	void unhookPointers();
+
 }

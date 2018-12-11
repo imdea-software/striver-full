@@ -18,4 +18,9 @@ public class PrevEqValExp<T> implements IValExpr<T> {
 		return (T) genericprev.getRes(t);
 	}
 
+	@Override
+	public void unhookPointers() {
+		genericprev.unhookPointers();
+	}
+
 }

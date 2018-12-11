@@ -7,4 +7,8 @@ public class RandomNegIntExpr implements IValExpr<Double> {
 		return -5d;
 	}
 
+	@Override
+	public void unhookPointers() {
+	}
+
 }

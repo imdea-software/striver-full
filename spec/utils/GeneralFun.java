@@ -27,4 +27,12 @@ public class GeneralFun<T> implements IValExpr<T> {
 		this.fun = fun;
 	}
 
+	@Override
+	public void unhookPointers() {
+		for (IValExpr<?> e:exprs) {
+			e.unhookPointers();
+		}
+		
+	}
+
 }

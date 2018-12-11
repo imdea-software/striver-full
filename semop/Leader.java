@@ -21,6 +21,8 @@ public class Leader<T> implements ILeader<T> {
 		TickTime tickTime = myTickExpr.calculateNextTime();
 		double nt = tickTime.time;
 		if (nt == Constants.INFTY) {
+			myTickExpr.unhookPointers();
+			myValExpr.unhookPointers();
 			return StriverEvent.posOutsideEv;
 		}
 		if (tickTime.isnotick) {

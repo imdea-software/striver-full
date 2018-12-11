@@ -16,4 +16,9 @@ public class PrevEqExp extends ITauExp {
 		return genericprev.getRes(t);
 	}
 
+	@Override
+	public void unhookPointers() {
+		genericprev.unhookPointers();
+	}
+
 }
