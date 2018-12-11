@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import adts.StriverEvent;
+import adts.GCList.GCIterator;
+import adts.GCList.GCLinkedList;
 import semop.Leader;
 import semop.Pointer;
 import semop.PointerFactory;
@@ -25,6 +27,27 @@ import spec.valueexp.tauexp.TExpr;
 public class FutStriver {
 
     public static void main(String[] args) {
+    	
+    		/*GCLinkedList<Integer> thelist = new GCLinkedList<>();
+    		GCIterator<Integer> iterator = thelist.iterator();
+    		GCIterator<Integer> iterator2 = thelist.iterator();
+    		thelist.add(5);
+    		thelist.add(6);
+    		thelist.add(7);
+    		thelist.add(8);
+    		thelist.add(9);
+    		while (iterator2.hasNext()) {
+    			System.out.println(iterator2.next());
+    		}
+    		thelist.removeLast();
+    		thelist.add(7);
+    		while (iterator.hasNext()) {
+    			System.out.println(iterator.next());
+    		}
+    		
+    		System.exit(0);*/
+    	
+    	
 		Table theTable = new Table();
 		PointerFactory pfactory = new PointerFactory(theTable);
 		
