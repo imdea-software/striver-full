@@ -118,8 +118,8 @@ public class FutStriver {
 		Pointer psout = theTable.getPointer("s");
 		List<Pointer> pointers = Arrays.asList(prout, pxout, psout);
 		
-			for (Pointer pointer:pointers)
-		for (int i=0;i<17;i++)
+		for (Pointer pointer:pointers)
+			for (int i=0;i<17;i++)
 				System.out.println(pointer.getStreamId() + " : "+pointer.pull());
     }
 

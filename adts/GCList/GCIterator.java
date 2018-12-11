@@ -21,4 +21,8 @@ public class GCIterator<T> implements Iterator<T>{
 		return pnext.getVal();
 	}
 
+	public void unhook() {
+		pnext = null;
+	}
+
 }

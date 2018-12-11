@@ -5,39 +5,36 @@ import java.util.Iterator;
 import adts.Constants;
 import adts.MaybeReentrant;
 import adts.StriverEvent;
+import adts.GCList.GCIterator;
 
 public class Pointer {
-	private double myPos = -1;
+	private boolean outsidepos = false;
 	// init these:
 	private Table t;
 	private String myStreamId;
-	private Iterator<StriverEvent> myIterator;
+	private GCIterator<StriverEvent> myIterator;
 	
-	public Pointer(Table t, String streamid, Iterator<StriverEvent> iterator) {
+	public Pointer(Table t, String streamid, GCIterator<StriverEvent> iterator) {
 		this.t=t;
 		this.myStreamId=streamid;
 		this.myIterator = iterator;
 	}
 	
 	public MaybeReentrant pull() {
-		if (myPos == Constants.INFTY) {
+		if (outsidepos) {
 			return MaybeReentrant.of(StriverEvent.posOutsideEv);
 		}
-		MaybeReentrant ev = null;
-		if (myIterator.hasNext()) {
-			ev = MaybeReentrant.of(myIterator.next());
-			if (ev.getEvent().getTS() <= myPos) {
-				int i=0;
+		StriverEvent ev;
+		if (!myIterator.hasNext()) {
+			boolean isreentrant = t.getNext(myStreamId);
+			if (isreentrant) {
+				return MaybeReentrant.reentrantevent();
 			}
-		} else {
-			ev = t.getNext(myStreamId);
-			if (!ev.isreentrant())
-				myIterator.next();
 		}
-		if (!ev.isreentrant()) {
-			myPos = ev.getEvent().getTS();
-		}
-		return ev;
+		ev = myIterator.next();
+		if (ev.getTS() == Constants.INFTY)
+			outsidepos=true;
+		return MaybeReentrant.of(ev);
 	}
 
 	public String getStreamId() {
@@ -45,8 +42,8 @@ public class Pointer {
 	}
 
 	public void sendForward() {
-		// TODO unhook iterator
-		this.myPos = Constants.INFTY;
+		myIterator.unhook();
+		this.outsidepos = true;
 	}
 	
 

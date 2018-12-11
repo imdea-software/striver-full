@@ -15,22 +15,21 @@ public class Table {
 	private HashMap<String, GCLinkedList<StriverEvent>> theTable = new HashMap<>();
 	private HashMap<String, ILeader<?>> leaders = new HashMap<>();
 	
-	public MaybeReentrant getNext(String streamid) {
+	public boolean getNext(String streamid) {
 		// Calculate it:
 		if (resolving.contains(streamid)) {
-			return MaybeReentrant.reentrantevent();
+			return true;
 		}
 		resolving.add(streamid);
 		StriverEvent ev = leaders.get(streamid).getNext();
 		GCLinkedList<StriverEvent> thelist = theTable.get(streamid);
-		// TODO recover
-		/*StriverEvent last = thelist.peekLast();
+		StriverEvent last = thelist.peekLast();
 		if (last != null && last.isnotick()) {
 			thelist.removeLast();
-		}*/
+		}
 		thelist.add(ev);
 		resolving.remove(streamid);
-		return MaybeReentrant.of(ev);
+		return false;
 	}
 	
 	public void setLeader(ILeader<?> inputLeader, String streamid) {
