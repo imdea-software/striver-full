@@ -4,7 +4,7 @@ import semop.Pointer;
 import spec.valueexp.generics.GenericSucc;
 import spec.valueexp.tauexp.ITauExp;
 
-public class SuccEqValExp<T> implements IValExpr<Object> {
+public class SuccEqValExp<T> extends INDValExpr<Object> {
 	
 	private GenericSucc<T> genericsucc;
 

@@ -1,8 +1,8 @@
 package spec.valueexp.tauexp;
 
-import spec.valueexp.IValExpr;
+import spec.valueexp.INDValExpr;
 
-public abstract class ITauExp implements IValExpr<Object> {
+public abstract class ITauExp extends INDValExpr<Object> {
 	
 	public abstract Object getT(double t);
 	

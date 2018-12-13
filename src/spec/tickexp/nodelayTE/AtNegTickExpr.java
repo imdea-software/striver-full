@@ -1,11 +1,11 @@
-package spec.tickexp;
+package spec.tickexp.nodelayTE;
 
 import adts.Constants;
 import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
 
-public class AtNegTickExpr implements ITickExpr {
+public class AtNegTickExpr implements INDTickExpr {
 
 	private double limit = 0;
 	// init this

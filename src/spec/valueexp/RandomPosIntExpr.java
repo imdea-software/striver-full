@@ -2,7 +2,7 @@ package spec.valueexp;
 
 import java.util.Random;
 
-public class RandomPosIntExpr implements IValExpr<Double> {
+public class RandomPosIntExpr extends INDValExpr<Double> {
 
 	private	Random r = new Random();
 	private double rangeMin = 1d;

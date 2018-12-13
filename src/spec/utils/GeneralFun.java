@@ -12,11 +12,11 @@ public class GeneralFun<T> implements IValExpr<T> {
 	private Fun<T> fun;
 
 	@Override
-	public T calculateValueAt(double nt) {
+	public T calculateValueAt(double nt, Object cv) {
 		Object[] args = new Object[exprs.length];
 		int i=0;
 		for (IValExpr<?> expr : exprs) {
-			args[i] = expr.calculateValueAt(nt);
+			args[i] = expr.calculateValueAt(nt,cv);
 			i++;
 		}
 		return fun.apply(args);

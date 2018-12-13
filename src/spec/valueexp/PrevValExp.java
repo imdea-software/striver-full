@@ -5,7 +5,7 @@ import semop.Pointer;
 import spec.valueexp.generics.GenericPrev;
 import spec.valueexp.tauexp.ITauExp;
 
-public class PrevValExp<T> implements IValExpr<Object> {
+public class PrevValExp<T> extends INDValExpr<Object> {
 	
 	private GenericPrev<T> genericprev;
 

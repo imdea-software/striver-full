@@ -1,11 +1,11 @@
-package spec.tickexp;
+package spec.tickexp.nodelayTE;
 
 import adts.Constants;
 import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
 
-public class AtPosTickExpr implements ITickExpr {
+public class AtPosTickExpr implements INDTickExpr {
 
 	private double sum=Constants.INFTY;
 	// init this

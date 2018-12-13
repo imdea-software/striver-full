@@ -28,7 +28,7 @@ public class Leader<T> implements ILeader<T> {
 		if (tickTime.isnotick) {
 			return new StriverEvent(nt, Constants.notick());
 		}
-		Object val = myValExpr.calculateValueAt(nt);
+		Object val = myValExpr.calculateValueAt(nt,tickTime.getCV());
 		return new StriverEvent(nt, val);
 	}
 

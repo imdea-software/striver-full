@@ -14,7 +14,7 @@ import semop.Pointer;
 import semop.Table;
 import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
-import spec.tickexp.SrcTickExpr;
+import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.utils.Constant;
 import spec.utils.Default;
 import spec.utils.GeneralFun;
