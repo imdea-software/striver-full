@@ -2,12 +2,12 @@ package spec.utils;
 
 import spec.utils.GeneralFun.Fun;
 
-public class UnsafeAdd implements Fun<Integer>{
+public class UnsafeAdd implements Fun<Double>{
 
 	@Override
-	public Integer apply(Object... args) {
-		Integer a = (Integer) args[0];
-		Integer b = (Integer) args[1];
+	public Double apply(Object... args) {
+		Double a = (Double) args[0];
+		Double b = (Double) args[1];
 		return a+b;
 	}
 

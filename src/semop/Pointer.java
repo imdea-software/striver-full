@@ -12,6 +12,8 @@ public class Pointer {
 	private String myStreamId;
 	// public for debug:
 	public GCIterator<StriverEvent> myIterator;
+	// exists for debug:
+	public double lastpos = -1d;
 	
 	public Pointer(Table t, String streamid, GCIterator<StriverEvent> iterator) {
 		this.t=t;
@@ -33,6 +35,7 @@ public class Pointer {
 		ev = myIterator.next();
 		if (ev.getTS() == Constants.INFTY)
 			sendForward();
+		this.lastpos = ev.getTS();
 		return MaybeReentrant.of(ev);
 	}
 
@@ -43,6 +46,7 @@ public class Pointer {
 	public void sendForward() {
 		myIterator.unhook();
 		this.quickreturn = MaybeReentrant.of(StriverEvent.posOutsideEv);
+		this.lastpos = Constants.INFTY;
 	}
 	
 

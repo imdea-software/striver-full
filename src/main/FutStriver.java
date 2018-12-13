@@ -16,6 +16,7 @@ import spec.utils.Default;
 import spec.utils.GeneralFun;
 import spec.utils.InputLeader;
 import spec.utils.UnsafeAdd;
+import spec.utils.UnsafeAddInt;
 import spec.valueexp.IValExpr;
 import spec.valueexp.PrevEqValExp;
 import spec.valueexp.PrevValExp;
@@ -79,7 +80,7 @@ public class FutStriver {
 		ITickExpr te = new SrcTickExpr(p);
 		Pointer pri2 = theTable.getPointer("in2");
 		Pointer prr = theTable.getPointer("r");
-		IValExpr<Integer> veint = new GeneralFun<Integer>(new UnsafeAdd(), 
+		IValExpr<Integer> veint = new GeneralFun<Integer>(new UnsafeAddInt(), 
 				new GeneralFun<Integer>(new Default<Integer>(0), new PrevValExp<>(prr, new TExpr())),
 				new PrevEqValExp<>(pri2, new TExpr())
 				);
@@ -97,7 +98,7 @@ public class FutStriver {
 		te = new SrcTickExpr(p);
 		Pointer psr = theTable.getPointer("r");
 		Pointer psx = theTable.getPointer("r");
-		veint = new GeneralFun<Integer>(new UnsafeAdd(), 
+		veint = new GeneralFun<Integer>(new UnsafeAddInt(), 
 				new PrevEqValExp<>(psr, new TExpr()),
 				new SuccEqValExp<>(psx, new TExpr()));
 		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "s");
