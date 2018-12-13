@@ -11,6 +11,8 @@ public class TickTime {
 	}
 
 	public TickTime(double d, boolean b, Object value) {
+		this.time=d;
+		this.isnotick = b;
 		this.carriedValue = value;
 	}
 	

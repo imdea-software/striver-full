@@ -1,15 +1,26 @@
 package adts;
 
-public class DelayAndValue {
+public class DelayAndValue<T> {
 
-	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
+	private T value;
+
+	private double delay;
+
+	public T getValue() {
+		return this.value;
 	}
 
 	public double getDelay() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.delay;
+	}
+
+	public DelayAndValue(double delay, T value) {
+		this.value = value;
+		this.delay = delay;
+	}
+	
+	public String toString() {
+		return "(" + this.delay + ", " + this.value + ")";
 	}
 
 }

@@ -7,20 +7,24 @@ import java.util.Random;
 
 
 import adts.Constants;
+import adts.DelayAndValue;
 import adts.StriverEvent;
 import semop.ILeader;
 import semop.Leader;
 import semop.Pointer;
 import semop.Table;
 import spec.StriverSpec;
+import spec.tickexp.DelayTickExpr;
 import spec.tickexp.ITickExpr;
 import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.utils.Constant;
+import spec.utils.DAVJoiner;
 import spec.utils.Default;
 import spec.utils.GeneralFun;
 import spec.utils.IfThenElse;
 import spec.utils.InputLeader;
 import spec.utils.UnsafeAdd;
+import spec.valueexp.CVValExpr;
 import spec.valueexp.IValExpr;
 import spec.valueexp.PrevEqValExp;
 import spec.valueexp.PrevValExp;
@@ -75,12 +79,33 @@ public class STLPoC {
 				);
 		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "psifalse");
 		
+		// delayed
+		Double win = 5d;
+		// phi x win
+		p = theTable.getPointer("phi");
+		te = new SrcTickExpr(p);
+		p = theTable.getPointer("phi");
+		IValExpr<DelayAndValue<Integer>> vedv = new GeneralFun<DelayAndValue<Integer>>(
+				new DAVJoiner<Integer>(),
+				new GeneralFun<Double>(new Constant<Double>(win)),
+				new PrevEqValExp<Integer>(p, new TExpr())
+				);
+		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, vedv)), "phixwin");
+
+		// shiftphi
+		p = theTable.getPointer("phixwin");
+		te = new DelayTickExpr(p);
+		veint = new CVValExpr<>();
+		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "shiftphi");
+		
 		// pointers
 		Pointer phi = theTable.getPointer("phi");
 		Pointer phitrue = theTable.getPointer("phitrue");
 		Pointer psi = theTable.getPointer("psi");
 		Pointer psifalse = theTable.getPointer("psifalse");
-		List<Pointer> pointers = Arrays.asList(phi, phitrue, psi, psifalse);
+		Pointer phixwin = theTable.getPointer("phixwin");
+		Pointer shiftphi = theTable.getPointer("shiftphi");
+		List<Pointer> pointers = Arrays.asList(phi, phitrue, psi, psifalse, phixwin, shiftphi);
 		
 		long lastReport = System.currentTimeMillis();
 		while (true) {
