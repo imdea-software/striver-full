@@ -15,13 +15,14 @@ public class DelayTickExpr implements ITickExpr {
 	public TickTime calculateNextTime() {
 		// FIXME: This implementation assumes a monotonically increasing t+fst(s(~t))
 		MaybeReentrant ev = mypointer.pull();
+		// FIXME: It could be reentrant
 		assert !ev.isreentrant();
 		double ts = ev.getEvent().getTS();
 		if (Constants.isnotick(ev.getEvent().getValue())) {
-			return new TickTime(ts,true, null);
+			return new TickTime(ts,Constants.notick());
 		}
 		DelayAndValue dav = (DelayAndValue) ev.getEvent().getValue();
-		return new TickTime(ts + dav.getDelay(), false, dav.getValue());
+		return new TickTime(ts + dav.getDelay(), dav.getValue());
 	}
 	
 	public DelayTickExpr(Pointer p) {

@@ -1,6 +1,5 @@
 package spec.tickexp.nodelayTE;
 
-import adts.Constants;
 import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
@@ -16,7 +15,7 @@ public class SrcTickExpr implements INDTickExpr {
 		MaybeReentrant ev = mypointer.pull();
 		assert !ev.isreentrant();
 		double ts = ev.getEvent().getTS();
-		return new TickTime(ts,Constants.isnotick(ev.getEvent().getValue()));
+		return new TickTime(ts,ev.getEvent().getValue());
 	}
 	
 	public SrcTickExpr(Pointer p) {

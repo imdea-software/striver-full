@@ -19,13 +19,13 @@ public class Leader<T> implements ILeader<T> {
 
 	public StriverEvent getNext() {
 		TickTime tickTime = myTickExpr.calculateNextTime();
-		double nt = tickTime.time;
+		double nt = tickTime.getTS();
 		if (nt == Constants.INFTY) {
 			myTickExpr.unhookPointers();
 			myValExpr.unhookPointers();
 			return StriverEvent.posOutsideEv;
 		}
-		if (tickTime.isnotick) {
+		if (Constants.isnotick(tickTime.getCV())) {
 			return new StriverEvent(nt, Constants.notick());
 		}
 		Object val = myValExpr.calculateValueAt(nt,tickTime.getCV());

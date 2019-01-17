@@ -1,11 +1,7 @@
 package main;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
-
-
 import adts.Constants;
 import adts.DelayAndValue;
 import adts.StriverEvent;
@@ -16,7 +12,6 @@ import semop.Table;
 import spec.StriverSpec;
 import spec.tickexp.DelayTickExpr;
 import spec.tickexp.ITickExpr;
-import spec.tickexp.nodelayTE.INDTickExpr;
 import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.tickexp.nodelayTE.UnionTickExpr;
 import spec.utils.Constant;
@@ -25,13 +20,10 @@ import spec.utils.Default;
 import spec.utils.GeneralFun;
 import spec.utils.GtFun;
 import spec.utils.IfThenElse;
-import spec.utils.InputLeader;
 import spec.utils.UnsafeAdd;
 import spec.valueexp.CVValExpr;
 import spec.valueexp.IValExpr;
 import spec.valueexp.PrevEqValExp;
-import spec.valueexp.PrevValExp;
-import spec.valueexp.SuccEqValExp;
 import spec.valueexp.tauexp.SuccExp;
 import spec.valueexp.tauexp.TExpr;
 
@@ -42,12 +34,25 @@ public class STLPoC {
 		Table theTable = new Table();
 		
 		// inputs:
-		theTable.setLeader(new ILeader<Boolean>() {
+		/*theTable.setLeader(new ILeader<Boolean>() {
 			int nxt = 0;
 			@Override
 			public StriverEvent getNext() {
 				nxt+=3;
 				return new StriverEvent(nxt, Math.random() < 0.5);
+			}
+			
+		}, "phi");*/
+		
+		theTable.setLeader(new ILeader<Boolean>() {
+			boolean given = false;
+			@Override
+			public StriverEvent getNext() {
+				if (given) {
+					return StriverEvent.posOutsideEv;
+				}
+				given = true;
+				return new StriverEvent(0, true);
 			}
 			
 		}, "phi");
@@ -86,7 +91,7 @@ public class STLPoC {
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "psifalse");
 		
 		// delayed
-		Double win = 5d;
+		Double win = 2d;
 		// phi x win
 		p = theTable.getPointer("phi");
 		te = new SrcTickExpr(p);
@@ -175,7 +180,7 @@ public class STLPoC {
 				Object lastval = null;
 				while (ev.getTS()<100) {
 					ev = pointer.pull().getEvent();
-					if (!ev.getValue().equals(lastval)) {
+					if (!ev.getValue().equals(lastval) && ev.getValue() != Constants.notick()) {
 						System.out.println(ev.getTS() + " " + lastval);
 						System.out.println(ev.getTS() + " " + ev.getValue());
 					}

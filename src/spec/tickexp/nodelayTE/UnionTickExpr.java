@@ -13,19 +13,19 @@ public class UnionTickExpr implements INDTickExpr {
 	@Override
 	public TickTime calculateNextTime() {
 		double retdouble=0;
-		boolean retbool=true;
+		boolean retnotick=true;
 		leftTickTime = getNext(leftTickTime, leftExpr);
 		rightTickTime = getNext(rightTickTime, rightExpr);
-		double leftt = leftTickTime.time;
-		double rightt = rightTickTime.time;
+		double leftt = leftTickTime.getTS();
+		double rightt = rightTickTime.getTS();
 		if (leftt <= rightt) {
 			retdouble = leftt;
-			retbool = leftTickTime.isnotick;
+			retnotick = Constants.isnotick(leftTickTime.getCV());
 			leftTickTime = null;
 		}
 		if (rightt <= leftt) {
 			retdouble = rightt;
-			retbool = retbool && rightTickTime.isnotick;
+			retnotick = retnotick && Constants.isnotick(rightTickTime.getCV());
 			rightTickTime = null;
 		}
 		if (rightt == Constants.INFTY) {
@@ -36,15 +36,12 @@ public class UnionTickExpr implements INDTickExpr {
 		}
 		assert (retdouble > lastts || lastts == Constants.INFTY);
 		lastts = retdouble;
-		return new TickTime(retdouble, retbool);
+		return new TickTime(retdouble, retnotick?Constants.notick():null);
 	}
 	
 	private TickTime getNext(TickTime tickTime, INDTickExpr tickExpr) {
-		if (tickTime == null) {
+		if (tickTime == null || tickTime.getTS() == lastts) {
 			tickTime = tickExpr.calculateNextTime();
-			if (tickTime.time == lastts) {
-				tickTime = tickExpr.calculateNextTime();
-			}
 		}
 		return tickTime;
 	}

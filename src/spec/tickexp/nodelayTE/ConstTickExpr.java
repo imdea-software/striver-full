@@ -16,9 +16,9 @@ public class ConstTickExpr implements INDTickExpr {
 	public TickTime calculateNextTime() {
 		if (!given) {
 			given=true;
-			return new TickTime(myVal, false);
+			return new TickTime(myVal);
 		}
-		return new TickTime(Constants.INFTY, false);
+		return new TickTime(Constants.INFTY);
 	}
 
 	@Override
