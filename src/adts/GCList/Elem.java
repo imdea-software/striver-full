@@ -1,6 +1,6 @@
 package adts.GCList;
 
-class Elem<T> {
+public class Elem<T> {
 
 	private T val=null;
 	private Elem<T> next;

@@ -33,7 +33,7 @@ public class STLPoC {
 
 	private static Table theTable = new Table();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
     	
 		
 		// inputs:
@@ -167,7 +167,15 @@ public class STLPoC {
 		
 		long lastReport = System.currentTimeMillis();
 		while (true) {
+			System.out.println(until.pull());
 			long now = System.currentTimeMillis();
+			if (now - lastReport > 4000) {
+			  /* Total amount of free memory available to the JVM */
+			  System.err.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+			  Thread.sleep(1000);
+			  lastReport = now;
+			}
+			if (true) continue;
 			if (now - lastReport > 4000&&false) {
 			  /* Total amount of free memory available to the JVM */
 			  //System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
