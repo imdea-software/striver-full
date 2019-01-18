@@ -12,13 +12,15 @@ public class Pointer {
 	private String myStreamId;
 	// public for debug:
 	public GCIterator<StriverEvent> myIterator;
+	public String myId;
 	// exists for debug:
 	public double lastpos = -1d;
 	
-	public Pointer(Table t, String streamid, GCIterator<StriverEvent> iterator) {
+	public Pointer(Table t, String streamid, GCIterator<StriverEvent> iterator, String debugid) {
 		this.t=t;
 		this.myStreamId=streamid;
 		this.myIterator = iterator;
+		this.myId = debugid;
 	}
 	
 	public MaybeReentrant pull() {

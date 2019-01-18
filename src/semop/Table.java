@@ -38,13 +38,14 @@ public class Table {
 	}
 
 	public Pointer getPointer(String stream) {
+		String debugid = Thread.currentThread().getStackTrace()[2].getMethodName() + "::" + Thread.currentThread().getStackTrace()[2].getLineNumber();
 		GCLinkedList<StriverEvent> thelist = theTable.get(stream);
 		if (thelist == null) {
 			thelist = new GCLinkedList<>();
 			theTable.put(stream, thelist);
 		}
 		GCIterator<StriverEvent> iterator = thelist.iterator();
-		Pointer ret = new Pointer(this, stream, iterator);
+		Pointer ret = new Pointer(this, stream, iterator, debugid);
 		pointers.add(ret);
 		return ret;
 	}

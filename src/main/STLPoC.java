@@ -155,37 +155,43 @@ public class STLPoC {
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "until");
 		
 		// pointers
-		Pointer phi = theTable.getPointer("phi");
+		/*Pointer phi = theTable.getPointer("phi");
 		Pointer phitrue = theTable.getPointer("phiFalse");
 		Pointer psi = theTable.getPointer("psi");
 		Pointer psifalse = theTable.getPointer("psiTrue");
 		Pointer phixwin = theTable.getPointer("phixwin");
 		Pointer shiftphi = theTable.getPointer("shiftphi");
 		Pointer shiftpsi = theTable.getPointer("shiftpsi");
+		List<Pointer> pointers = Arrays.asList(phi, phitrue, psi, psifalse, phixwin, shiftphi, shiftpsi, until);*/
 		Pointer until = theTable.getPointer("until");
-		List<Pointer> pointers = Arrays.asList(phi, phitrue, psi, psifalse, phixwin, shiftphi, shiftpsi, until);
 		
 		long lastReport = System.currentTimeMillis();
 		while (true) {
-			System.out.println(until.pull());
 			long now = System.currentTimeMillis();
-			if (now - lastReport > 4000) {
-			  /* Total amount of free memory available to the JVM */
-			  System.err.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
-			  Thread.sleep(1000);
-			  lastReport = now;
-			}
-			if (true) continue;
-			if (now - lastReport > 4000&&false) {
-			  /* Total amount of free memory available to the JVM */
-			  //System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
-				for (Pointer pointer:theTable.pointers) {
-					System.out.println("Pointer " + pointer.hashCode() + " for stream " +pointer.getStreamId() + " next val: " +pointer.myIterator.pnext);
+			if (!true) {
+				System.out.println(until.pull());
+				if (now - lastReport > 4000) {
+				  /* Total amount of free memory available to the JVM */
+				  System.err.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+				  Thread.sleep(1000);
+				  lastReport = now;
 				}
-					System.out.println("-----------------------");
-			  lastReport = now;
+				continue;
 			}
-			for (Pointer pointer:pointers) {
+			if (true) {
+				until.pull();
+				if (now - lastReport > 4000) {
+					/* Total amount of free memory available to the JVM */
+					//System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+					for (Pointer pointer:theTable.pointers) {
+						System.out.println("Pointer " + pointer.myId + " for stream " + pointer.getStreamId() + " next val: " +pointer.myIterator.pnext);
+					}
+					System.out.println("-----------------------");
+					lastReport = now;
+				}
+				continue;
+			}
+			/*for (Pointer pointer:pointers) {
 				System.out.println(pointer.getStreamId());
 				StriverEvent ev = new StriverEvent(0,true);
 				Object lastval = null;
@@ -198,7 +204,7 @@ public class STLPoC {
 						lastval = newValue;
 					}
 				}
-			}
+			}*/
 			System.exit(0);
 			System.out.println("-----------------------");
 		}
