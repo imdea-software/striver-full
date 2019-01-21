@@ -70,15 +70,18 @@ public class STLPoC {
 		theTable.setLeader(new CsvLeader("/Users/felipe.gorostiaga/eclipse-workspace/FutStriverJava/data.csv") , "speed");
 		
 		// outputs:
+		Pointer p;
+		ITickExpr te;
+		IValExpr<Boolean> vebool;
 		//toofast: speed > max
-		Pointer p = theTable.getPointer("speed");
+		/*Pointer p = theTable.getPointer("speed");
 		ITickExpr te = new SrcTickExpr(p);
 		p = theTable.getPointer("speed");
 		IValExpr<Boolean> vebool = new GeneralFun<Boolean>(new GtFun(),
 				new PrevEqValExp<>(p, new TExpr()),
 				new GeneralFun<Object>(new Constant<Object>(MAX_SPEED))
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "toofast");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "toofast");*/
 
 		//psi: speed < okspeed
 		p = theTable.getPointer("speed");
@@ -209,27 +212,27 @@ public class STLPoC {
 		Pointer shiftphi = theTable.getPointer("shiftphi");
 		Pointer shiftpsi = theTable.getPointer("shiftpsi");
 		List<Pointer> pointers = Arrays.asList(phi, phitrue, psi, psifalse, phixwin, shiftphi, shiftpsi, until);*/
-		Pointer speed = theTable.getPointer("speed");
-		Pointer accel = theTable.getPointer("accel");
+		//Pointer speed = theTable.getPointer("speed");
+		//Pointer accel = theTable.getPointer("accel");
 		Pointer until = theTable.getPointer("until");
 		
 		long lastReport = System.currentTimeMillis();
 		while (true) {
 			long now = System.currentTimeMillis();
 			if (true) {
-				MaybeReentrant ev = speed.pull();
+				/*MaybeReentrant ev = speed.pull();
 				System.out.println("speed");
 				System.out.println(ev);
 				ev = accel.pull();
 				System.out.println("accel");
 				System.out.println(ev);
-				ev = until.pull();
-				System.out.println("until");
-				System.out.println(ev);
-				if (now - lastReport > 4000) {
+				System.out.println("until");*/
+				MaybeReentrant ev = until.pull();
+				//System.out.println(ev);
+				if (now - lastReport > 2000) {
 				  /* Total amount of free memory available to the JVM */
-				  System.err.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
-				  Thread.sleep(1000);
+				  System.err.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024/1024 + " MB");
+				  //Thread.sleep(1000);
 				  lastReport = now;
 				}
 				if (ev.getEvent() == StriverEvent.posOutsideEv)
@@ -238,7 +241,7 @@ public class STLPoC {
 			}
 			if (true) {
 				until.pull();
-				if (now - lastReport > 4000) {
+				if (now - lastReport > 2000) {
 					/* Total amount of free memory available to the JVM */
 					//System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
 					for (Pointer pointer:theTable.pointers) {

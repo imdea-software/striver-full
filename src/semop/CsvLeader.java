@@ -11,9 +11,12 @@ public class CsvLeader implements ILeader<Double> {
 	
 	private BufferedReader br = null;
 	private Double lastTime = null;
+	private String filename;
+	private Double offset=0d;
 	private static final Double eps = 0.0001d;
 
 	public CsvLeader(String filename) {
+		this.filename = filename;
         try {
 			this.br = new BufferedReader(new FileReader(filename));
 		} catch (FileNotFoundException e) {
@@ -24,14 +27,19 @@ public class CsvLeader implements ILeader<Double> {
 	public StriverEvent getNext() {
 		String line;
 		try {
-			line = br.readLine();
-			if (line != null) {
-			    String[] data = line.split(",");
-			    Double ts = Double.valueOf(data[0]);
-			    if (lastTime != null && ts <= lastTime)
-			    		ts = lastTime + eps;
-			    lastTime = ts;
-			    return new StriverEvent(ts, Double.valueOf(data[1]));
+			while (true) {
+				line = br.readLine();
+				if (line != null) {
+					String[] data = line.split(",");
+					Double ts = Double.valueOf(data[0]) + offset;
+					if (lastTime != null && ts <= lastTime)
+						ts = lastTime + eps;
+					lastTime = ts;
+					return new StriverEvent(ts, Double.valueOf(data[1]));
+				} else {
+					this.offset = lastTime;
+					this.br = new BufferedReader(new FileReader(filename));
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
