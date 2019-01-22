@@ -22,6 +22,7 @@ import spec.utils.DivisionFun;
 import spec.utils.GeneralFun;
 import spec.utils.GtFun;
 import spec.utils.IfThenElse;
+import spec.utils.Implies;
 import spec.utils.LeqFun;
 import spec.utils.MinusFun;
 import spec.utils.UnsafeAdd;
@@ -54,7 +55,7 @@ public class STLPoC {
 			
 		}, "phi");*/
 		
-		theTable.setLeader(new ILeader<Boolean>() {
+		/*theTable.setLeader(new ILeader<Boolean>() {
 			boolean given = false;
 			@Override
 			public StriverEvent getNext() {
@@ -65,7 +66,7 @@ public class STLPoC {
 				return new StriverEvent(0, true);
 			}
 			
-		}, "phi");
+		}, "phi");*/
 
 		theTable.setLeader(new CsvLeader("/Users/felipe.gorostiaga/eclipse-workspace/FutStriverJava/data.csv") , "speed");
 		
@@ -74,14 +75,14 @@ public class STLPoC {
 		ITickExpr te;
 		IValExpr<Boolean> vebool;
 		//toofast: speed > max
-		/*Pointer p = theTable.getPointer("speed");
-		ITickExpr te = new SrcTickExpr(p);
 		p = theTable.getPointer("speed");
-		IValExpr<Boolean> vebool = new GeneralFun<Boolean>(new GtFun(),
+		te = new SrcTickExpr(p);
+		p = theTable.getPointer("speed");
+		vebool = new GeneralFun<Boolean>(new GtFun(),
 				new PrevEqValExp<>(p, new TExpr()),
 				new GeneralFun<Object>(new Constant<Object>(MAX_SPEED))
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "toofast");*/
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "toofast");
 
 		//psi: speed < okspeed
 		p = theTable.getPointer("speed");
@@ -93,7 +94,7 @@ public class STLPoC {
 				);
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "psi");
 		
-		// acceleration: (speed(~t) - speed(<t)) / (t - <<t)
+		// acceleration: (speed(~t) - speed(<t)) / (t - speed<<t)
 		p = theTable.getPointer("speed");
 		te = new SrcTickExpr(p);
 		IValExpr<Double> vedouble = new GeneralFun<Double>(new DivisionFun(),
@@ -203,6 +204,14 @@ public class STLPoC {
 				);
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "until");
 		
+		// property: toofast -> deacceleration until slow enough
+		te = new SrcTickExpr(theTable.getPointer("speed"));
+		vebool = new GeneralFun<Boolean>(new Implies(),
+				new PrevEqValExp<Boolean>(theTable.getPointer("toofast"), new TExpr()),
+				new PrevEqValExp<Boolean>(theTable.getPointer("until"), new TExpr())
+		);
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "property");
+		
 		// pointers
 		/*Pointer phi = theTable.getPointer("phi");
 		Pointer phitrue = theTable.getPointer("phiFalse");
@@ -214,7 +223,7 @@ public class STLPoC {
 		List<Pointer> pointers = Arrays.asList(phi, phitrue, psi, psifalse, phixwin, shiftphi, shiftpsi, until);*/
 		//Pointer speed = theTable.getPointer("speed");
 		//Pointer accel = theTable.getPointer("accel");
-		Pointer until = theTable.getPointer("until");
+		Pointer prop = theTable.getPointer("property");
 		
 		long lastReport = System.currentTimeMillis();
 		while (true) {
@@ -227,7 +236,7 @@ public class STLPoC {
 				System.out.println("accel");
 				System.out.println(ev);
 				System.out.println("until");*/
-				MaybeReentrant ev = until.pull();
+				MaybeReentrant ev = prop.pull();
 				//System.out.println(ev);
 				if (now - lastReport > 2000) {
 				  /* Total amount of free memory available to the JVM */
@@ -240,7 +249,7 @@ public class STLPoC {
 				continue;
 			}
 			if (true) {
-				until.pull();
+				prop.pull();
 				if (now - lastReport > 2000) {
 					/* Total amount of free memory available to the JVM */
 					//System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());

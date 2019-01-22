@@ -8,7 +8,7 @@ import spec.valueexp.tauexp.ITauExp;
 
 public class GenericSucc<T> {
 
-	private double headt = -2;
+	private double headt = -Double.MAX_VALUE;
 	private T headv = null;
 	// init these
 	private Pointer myPointer;
