@@ -68,7 +68,8 @@ public class STLPoC {
 			
 		}, "phi");*/
 
-		theTable.setLeader(new CsvLeader("/Users/felipe.gorostiaga/eclipse-workspace/FutStriverJava/data.csv") , "speed");
+		CsvLeader csvleader = new CsvLeader("/Users/felipe.gorostiaga/eclipse-workspace/FutStriverJava/data.csv");
+		theTable.setLeader(csvleader,"speed");
 		
 		// outputs:
 		Pointer p;
@@ -238,8 +239,9 @@ public class STLPoC {
 				System.out.println("until");*/
 				MaybeReentrant ev = prop.pull();
 				//System.out.println(ev);
-				if (now - lastReport > 2000) {
+				if (csvleader.processedEvents()%50000 == 0) {
 				  /* Total amount of free memory available to the JVM */
+				  System.err.println("Processed events: " + csvleader.processedEvents());
 				  System.err.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024/1024 + " MB");
 				  //Thread.sleep(1000);
 				  lastReport = now;

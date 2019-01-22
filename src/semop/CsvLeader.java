@@ -13,6 +13,7 @@ public class CsvLeader implements ILeader<Double> {
 	private Double lastTime = null;
 	private String filename;
 	private Double offset=0d;
+	private int processedEvents=0;
 	private static final Double eps = 0.0001d;
 
 	public CsvLeader(String filename) {
@@ -35,6 +36,7 @@ public class CsvLeader implements ILeader<Double> {
 					if (lastTime != null && ts <= lastTime)
 						ts = lastTime + eps;
 					lastTime = ts;
+					processedEvents++;
 					return new StriverEvent(ts, Double.valueOf(data[1]));
 				} else {
 					this.offset = lastTime;
@@ -45,6 +47,9 @@ public class CsvLeader implements ILeader<Double> {
 			e.printStackTrace();
 		}
 		return StriverEvent.posOutsideEv;
+	}
+	public int processedEvents() {
+		return processedEvents;
 	}
 	
 }
