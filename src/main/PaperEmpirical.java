@@ -5,27 +5,24 @@ import java.util.List;
 import java.util.Random;
 
 import adts.Constants;
-import adts.MaybeReentrant;
 import adts.StriverEvent;
-import semop.CsvLeader;
 import semop.ILeader;
 import semop.Leader;
 import semop.Pointer;
 import semop.Table;
 import spec.StriverSpec;
-import spec.tickexp.ShiftTickExpr;
 import spec.tickexp.ITickExpr;
+import spec.tickexp.ShiftTickExpr;
+import spec.tickexp.nodelayTE.ConstTickExpr;
 import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.tickexp.nodelayTE.UnionTickExpr;
 import spec.utils.And;
 import spec.utils.Constant;
 import spec.utils.Default;
 import spec.utils.DivisionFun;
-import spec.utils.EqFun;
 import spec.utils.GeneralFun;
 import spec.utils.GtFun;
 import spec.utils.IfThenElse;
-import spec.utils.Implies;
 import spec.utils.LeqFun;
 import spec.utils.MinusFun;
 import spec.utils.UnsafeAdd;
@@ -61,24 +58,16 @@ public class PaperEmpirical {
 			}
 			
 		}, "speed");
-		
-		theTable.setLeader(new ILeader<Boolean>() {
-			boolean given = false;
-			@Override
-			public StriverEvent getNext() {
-				if (given) {
-					return StriverEvent.posOutsideEv;
-				}
-				given = true;
-				return new StriverEvent(0, true);
-			}
-			
-		}, "true"); // TODO make it easier
 
 		// outputs:
 		Pointer p;
 		ITickExpr te;
 		IValExpr<Boolean> vebool;
+		
+		// true: true
+		te = new ConstTickExpr(0);
+		GeneralFun<Boolean> ve = new GeneralFun<Boolean>(new Constant<Boolean>(true));
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, ve)), "true");
 		//toofast: speed > max
 		p = theTable.getPointer("speed");
 		te = new SrcTickExpr(p);
