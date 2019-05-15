@@ -3,8 +3,9 @@ package spec.tickexp.nodelayTE;
 import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
+import spec.tickexp.ITickExpr;
 
-public class SrcTickExpr implements INDTickExpr {
+public class SrcTickExpr implements ITickExpr {
 	
 	// init this
 	private Pointer mypointer;

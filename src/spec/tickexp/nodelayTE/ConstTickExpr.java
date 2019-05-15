@@ -2,8 +2,9 @@ package spec.tickexp.nodelayTE;
 
 import adts.Constants;
 import semop.TickTime;
+import spec.tickexp.ITickExpr;
 
-public class ConstTickExpr implements INDTickExpr {
+public class ConstTickExpr implements ITickExpr {
 	private boolean given=false;
 	// init this:
 	private int myVal;

@@ -4,8 +4,9 @@ import adts.Constants;
 import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
+import spec.tickexp.ITickExpr;
 
-public class DelayNegTickExpr implements INDTickExpr {
+public class DelayNegTickExpr implements ITickExpr {
 
 	private double limit = 0;
 	// init this

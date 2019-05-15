@@ -2,13 +2,14 @@ package spec.tickexp.nodelayTE;
 
 import adts.Constants;
 import semop.TickTime;
+import spec.tickexp.ITickExpr;
 
-public class UnionTickExpr implements INDTickExpr {
+public class UnionTickExpr implements ITickExpr {
 	
 	private TickTime leftTickTime=null, rightTickTime=null;
 	private double lastts = -1;
 	//init these
-	private INDTickExpr leftExpr, rightExpr;
+	private ITickExpr leftExpr, rightExpr;
 
 	@Override
 	public TickTime calculateNextTime() {
@@ -39,14 +40,14 @@ public class UnionTickExpr implements INDTickExpr {
 		return new TickTime(retdouble, retnotick?Constants.notick():null);
 	}
 	
-	private TickTime getNext(TickTime tickTime, INDTickExpr tickExpr) {
+	private TickTime getNext(TickTime tickTime, ITickExpr tickExpr) {
 		if (tickTime == null || tickTime.getTS() == lastts) {
 			tickTime = tickExpr.calculateNextTime();
 		}
 		return tickTime;
 	}
 
-	public UnionTickExpr(INDTickExpr leftExpr, INDTickExpr rightExpr) {
+	public UnionTickExpr(ITickExpr leftExpr, ITickExpr rightExpr) {
 		this.leftExpr = leftExpr;
 		this.rightExpr = rightExpr;
 	}

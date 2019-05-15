@@ -4,8 +4,9 @@ import adts.Constants;
 import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
+import spec.tickexp.ITickExpr;
 
-public class DelayPosTickExpr implements INDTickExpr {
+public class DelayPosTickExpr implements ITickExpr {
 
 	private double sum=Constants.INFTY;
 	// init this
