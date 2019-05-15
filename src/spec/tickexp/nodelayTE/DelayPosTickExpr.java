@@ -5,7 +5,7 @@ import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
 
-public class AtPosTickExpr implements INDTickExpr {
+public class DelayPosTickExpr implements INDTickExpr {
 
 	private double sum=Constants.INFTY;
 	// init this
@@ -31,7 +31,7 @@ public class AtPosTickExpr implements INDTickExpr {
 		return ret;
 	}
 
-	public AtPosTickExpr(Pointer p) {
+	public DelayPosTickExpr(Pointer p) {
 		this.mypointer = p;
 	}
 

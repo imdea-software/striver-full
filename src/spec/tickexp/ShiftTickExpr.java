@@ -6,10 +6,11 @@ import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
 
-public class DelayTickExpr implements ITickExpr {
+public class ShiftTickExpr implements ITickExpr {
 	
 	// init this
 	private Pointer mypointer;
+	private double c;
 
 	@Override
 	public TickTime calculateNextTime() {
@@ -21,12 +22,12 @@ public class DelayTickExpr implements ITickExpr {
 		if (Constants.isnotick(ev.getEvent().getValue())) {
 			return new TickTime(ts,Constants.notick());
 		}
-		DelayAndValue dav = (DelayAndValue) ev.getEvent().getValue();
-		return new TickTime(ts + dav.getDelay(), dav.getValue());
+		return new TickTime(ts + this.c, ev.getEvent().getValue());
 	}
 	
-	public DelayTickExpr(Pointer p) {
+	public ShiftTickExpr(Pointer p, double c) {
 		this.mypointer = p;
+		this.c = c;
 	}
 
 	@Override

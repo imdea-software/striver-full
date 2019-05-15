@@ -5,7 +5,7 @@ import adts.MaybeReentrant;
 import semop.Pointer;
 import semop.TickTime;
 
-public class AtNegTickExpr implements INDTickExpr {
+public class DelayNegTickExpr implements INDTickExpr {
 
 	private double limit = 0;
 	// init this
@@ -36,7 +36,7 @@ public class AtNegTickExpr implements INDTickExpr {
 		return ret;
 	}
 
-	public AtNegTickExpr(Pointer p) {
+	public DelayNegTickExpr(Pointer p) {
 		this.mypointer = p;
 	}
 

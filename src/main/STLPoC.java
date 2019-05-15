@@ -1,22 +1,22 @@
 package main;
 
+import java.util.Arrays;
+import java.util.List;
+
 import adts.Constants;
-import adts.DelayAndValue;
 import adts.MaybeReentrant;
 import adts.StriverEvent;
 import semop.CsvLeader;
-import semop.ILeader;
 import semop.Leader;
 import semop.Pointer;
 import semop.Table;
 import spec.StriverSpec;
-import spec.tickexp.DelayTickExpr;
+import spec.tickexp.ShiftTickExpr;
 import spec.tickexp.ITickExpr;
 import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.tickexp.nodelayTE.UnionTickExpr;
 import spec.utils.And;
 import spec.utils.Constant;
-import spec.utils.DAVJoiner;
 import spec.utils.Default;
 import spec.utils.DivisionFun;
 import spec.utils.GeneralFun;
@@ -146,37 +146,15 @@ public class STLPoC {
 				);
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "psiTrue");
 		
-		// phi x win
-		p = theTable.getPointer("phi");
-		te = new SrcTickExpr(p);
-		p = theTable.getPointer("phi");
-		IValExpr<DelayAndValue<Boolean>> vedv = new GeneralFun<DelayAndValue<Boolean>>(
-				new DAVJoiner<Boolean>(),
-				new GeneralFun<Double>(new Constant<Double>(-b)),
-				new PrevEqValExp<Boolean>(p, new TExpr())
-				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vedv)), "phixwin");
-
 		// shiftphi
-		p = theTable.getPointer("phixwin");
-		te = new DelayTickExpr(p);
+		p = theTable.getPointer("phi");
+		te = new ShiftTickExpr(p,-b);
 		vebool = new CVValExpr<>();
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "shiftphi");
 
-		// psi x win
-		p = theTable.getPointer("psi");
-		te = new SrcTickExpr(p);
-		p = theTable.getPointer("psi");
-		vedv = new GeneralFun<DelayAndValue<Boolean>>(
-				new DAVJoiner<Boolean>(),
-				new GeneralFun<Double>(new Constant<Double>(-b)),
-				new PrevEqValExp<Boolean>(p, new TExpr())
-				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vedv)), "psixwin");
-
 		// shiftpsi
-		p = theTable.getPointer("psixwin");
-		te = new DelayTickExpr(p);
+		p = theTable.getPointer("psi");
+		te = new ShiftTickExpr(p,-b);
 		vebool = new CVValExpr<Boolean>();
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "shiftpsi");
 		
@@ -214,14 +192,13 @@ public class STLPoC {
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "property");
 		
 		// pointers
-		/*Pointer phi = theTable.getPointer("phi");
+		Pointer phi = theTable.getPointer("phi");
 		Pointer phitrue = theTable.getPointer("phiFalse");
 		Pointer psi = theTable.getPointer("psi");
 		Pointer psifalse = theTable.getPointer("psiTrue");
-		Pointer phixwin = theTable.getPointer("phixwin");
 		Pointer shiftphi = theTable.getPointer("shiftphi");
 		Pointer shiftpsi = theTable.getPointer("shiftpsi");
-		List<Pointer> pointers = Arrays.asList(phi, phitrue, psi, psifalse, phixwin, shiftphi, shiftpsi, until);*/
+		List<Pointer> pointers = Arrays.asList(phi, phitrue, psi, psifalse, shiftphi, shiftpsi, theTable.getPointer("property"));
 		//Pointer speed = theTable.getPointer("speed");
 		//Pointer accel = theTable.getPointer("accel");
 		Pointer prop = theTable.getPointer("property");
@@ -229,7 +206,7 @@ public class STLPoC {
 		long lastReport = System.currentTimeMillis();
 		while (true) {
 			long now = System.currentTimeMillis();
-			if (true) {
+			if (!true) {
 				/*MaybeReentrant ev = speed.pull();
 				System.out.println("speed");
 				System.out.println(ev);
@@ -250,7 +227,7 @@ public class STLPoC {
 					System.exit(0);
 				continue;
 			}
-			if (true) {
+			if (!true) {
 				prop.pull();
 				if (now - lastReport > 2000) {
 					/* Total amount of free memory available to the JVM */
@@ -263,7 +240,7 @@ public class STLPoC {
 				}
 				continue;
 			}
-			/*for (Pointer pointer:pointers) {
+			for (Pointer pointer:pointers) {
 				System.out.println(pointer.getStreamId());
 				StriverEvent ev = new StriverEvent(0,true);
 				Object lastval = null;
@@ -276,7 +253,7 @@ public class STLPoC {
 						lastval = newValue;
 					}
 				}
-			}*/
+			}
 			System.exit(0);
 			System.out.println("-----------------------");
 		}
