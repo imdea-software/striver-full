@@ -48,7 +48,7 @@ public class PaperEmpirical {
 		theTable.setLeader(new ILeader<Boolean>() {
 			double nxtTs = 0d;
 			double nxtVal = 0;
-			Random generator = new Random(5);
+			Random generator = new Random(6);
 			@Override
 			public StriverEvent getNext() {
 				nxtTs+=3;
@@ -131,7 +131,7 @@ public class PaperEmpirical {
 
 		double limitTS = 0D;
 		long peakMB = 0L;
-		while (evs<200000000) {
+		while (evs<100000000) {
 			for (Pointer pointer:pointers) {
 				StriverEvent ev = pointer.pull().getEvent();
 				double evTS = ev.getTS();
@@ -147,26 +147,12 @@ public class PaperEmpirical {
 			// report:
 			if (evs%500000==1) {
 				/* Total amount of free memory available to the JVM */
-				//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
 				System.gc();
 				Thread.sleep(100);
+				// This might be constant because memory goes up during calculation..
+				// We should use an external tool or a dedicated thread.
 				long mb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
 				if (mb>peakMB) peakMB = mb;
-				//System.out.println("Used memory: " + mb + " KB");
-				System.out.println("limitTS: " + limitTS);
-				//Thread.sleep(1000);
-				/*for (Pointer pointer:theTable.pointers) {
-					System.out.println("Pointer " + pointer.myId + " for stream " + pointer.getStreamId() + " next val: " +pointer.myIterator.pnext + " posintable:" + pointer.posintable);
-				}
-				System.out.println("-----------------------");*/
-				if (evs>40000000)
-					System.out.println("Evs:" + evs);
-			}
-			if (evs%1000000==1&&false)
-			{
-				System.out.println("$ key");
-				System.in.read();
-				System.out.println("$");
 			}
 		}
 		System.err.println("Peak memory: " + peakMB + " MB");
