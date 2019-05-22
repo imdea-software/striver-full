@@ -1,11 +1,15 @@
 package main;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import adts.Constants;
+import adts.MaybeReentrant;
 import adts.StriverEvent;
+import adts.Unit;
+import adts.GCList.GCIterator;
 import semop.ILeader;
 import semop.Leader;
 import semop.Pointer;
@@ -37,23 +41,27 @@ public class PaperEmpirical {
 	private static final Double MAX_SPEED = 1d;
 	private static final Double OK_SPEED = 0.4d;
 	private static Table theTable = new Table();
+	private static int evs=0;
 
-    public static void main(String[] args) throws InterruptedException {
-    	
-		
-		// inputs:
+    public static void main(String[] args) throws InterruptedException, IOException {
+		// input:
 		theTable.setLeader(new ILeader<Boolean>() {
-			int nxtTs = 0;
+			double nxtTs = 0d;
 			double nxtVal = 0;
 			Random generator = new Random(5);
 			@Override
 			public StriverEvent getNext() {
 				nxtTs+=3;
 				nxtVal = nxtVal + generator.nextDouble()-0.5;
-				return new StriverEvent(nxtTs, nxtVal);
+				evs++;
+				return new StriverEvent("speed",nxtTs, nxtVal);
+			}
+			@Override
+			public String getStreamName() {
+				return "speed";
 			}
 			
-		}, "speed");
+		});
 
 		// outputs:
 		Pointer p;
@@ -63,7 +71,7 @@ public class PaperEmpirical {
 		// true: true
 		te = new ConstTickExpr(0);
 		GeneralFun<Boolean> ve = new GeneralFun<Boolean>(new Constant<Boolean>(true));
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, ve)), "true");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, ve), "true"));
 
 		//toofast: speed > max
 		p = theTable.getPointer("speed");
@@ -73,7 +81,7 @@ public class PaperEmpirical {
 				new PrevEqValExp<>(p, new TExpr()),
 				new GeneralFun<Object>(new Constant<Object>(MAX_SPEED))
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "toofast");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "toofast"));
 
 		//psi: speed < okspeed
 		p = theTable.getPointer("speed");
@@ -83,7 +91,7 @@ public class PaperEmpirical {
 				new GeneralFun<Object>(new Constant<Object>(OK_SPEED)),
 				new PrevEqValExp<>(p, new TExpr())
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "speedok");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "speedok"));
 		
 		// deaccel: accel < 0
 		p = theTable.getPointer("speed");
@@ -92,7 +100,7 @@ public class PaperEmpirical {
 				new PrevEqValExp<>(theTable.getPointer("speed"), new TExpr()),
 				new SuccValExp<>(theTable.getPointer("speed"), new TExpr())
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "deaccel");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "deaccel"));
 		
 		//createUntil("true", "deaccel", -1d, 2d, "event_deaccel");
 		
@@ -113,101 +121,123 @@ public class PaperEmpirical {
     					new Default<Boolean>(true),
 				new PrevEqValExp<>(theTable.getPointer("deaccels_to_ok_in_five"), new TExpr()))
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "too_fast_implies_deaccels_to_ok_in_five");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "too_fast_implies_deaccels_to_ok_in_five"));
 		
 
 		List<Pointer> pointers = Arrays.asList(
-				theTable.getPointer("deaccel"),
-				theTable.getPointer("speed"),
-				theTable.getPointer("speedok"),
-				theTable.getPointer("deaccels_to_ok_in_five"),
-				theTable.getPointer("too_fast_implies_deaccels_to_ok_in_five")/*,
-				theTable.getPointer("shiftedpsia"),
-				theTable.getPointer("shiftedpsiaT"),
-				theTable.getPointer("deaccel")*/
+				//theTable.getPointer("speed"),
+				theTable.getPointer("too_fast_implies_deaccels_to_ok_in_five")
 				);
-		for (Pointer pointer:pointers) {
-			System.out.println(pointer.getStreamId());
-			StriverEvent ev = new StriverEvent(0,true);
-			Object lastval = null;
-			while (ev.getTS()<100) {
-				ev = pointer.pull().getEvent();
-				Object newValue = ev.getValue();
-				if (!newValue.equals(lastval) && newValue != Constants.notick()) {
-					System.out.println(ev.getTS() + " " + lastval);
-					System.out.println(ev.getTS() + " " + newValue);
-					lastval = newValue;
+
+		double limitTS = 0D;
+		long peakMB = 0L;
+		while (evs<200000000) {
+			for (Pointer pointer:pointers) {
+				StriverEvent ev = pointer.pull().getEvent();
+				double evTS = ev.getTS();
+				//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
+				// Keep the pointers close to each other
+				while (evTS<limitTS) {
+					ev = pointer.pull().getEvent();
+					evTS = ev.getTS();
+					//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
 				}
+				limitTS = evTS;
+			}
+			// report:
+			if (evs%500000==1) {
+				/* Total amount of free memory available to the JVM */
+				//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
+				System.gc();
+				Thread.sleep(100);
+				long mb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
+				if (mb>peakMB) peakMB = mb;
+				//System.out.println("Used memory: " + mb + " KB");
+				System.out.println("limitTS: " + limitTS);
+				//Thread.sleep(1000);
+				/*for (Pointer pointer:theTable.pointers) {
+					System.out.println("Pointer " + pointer.myId + " for stream " + pointer.getStreamId() + " next val: " +pointer.myIterator.pnext + " posintable:" + pointer.posintable);
+				}
+				System.out.println("-----------------------");*/
+				if (evs>40000000)
+					System.out.println("Evs:" + evs);
+			}
+			if (evs%1000000==1&&false)
+			{
+				System.out.println("$ key");
+				System.in.read();
+				System.out.println("$");
 			}
 		}
+		System.err.println("Peak memory: " + peakMB + " MB");
     }
 
     private static void createUntil(String phi, String psi, Double a, Double b, String out) {
-    	// shiftedpsia
-    	Pointer p = theTable.getPointer(psi);
-    	ITickExpr te = new ShiftTickExpr(p,-a);
-    	CVValExpr<Boolean> shiftedpsiave = new CVValExpr<>();
-    	String shiftedpsia = "shifted"+psi+a;
-    	theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, shiftedpsiave)), shiftedpsia);
+			// shiftedpsia
+			Pointer p = theTable.getPointer(psi);
+			ITickExpr te = new ShiftTickExpr(p,-a);
+			CVValExpr<Boolean> shiftedpsiave = new CVValExpr<>();
+			String shiftedpsia = "shifted"+psi+a;
+			theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, shiftedpsiave), shiftedpsia));
 
-    	// shiftedpsiaT
-    	p = theTable.getPointer(shiftedpsia);
-    	te = new SrcTickExpr(p);
-    	IValExpr<Unit> veUnit = new GeneralFun<Unit>(
-    			new IfThenElse<>(),
-    			new CVValExpr<>(),
-    			new GeneralFun<Unit>(new Constant<Unit>(Unit.unit())),
-    			new GeneralFun<Object>(new Constant<Object>(Constants.notick()))
-    			);
-    	String shiftedpsiaT = shiftedpsia+"T";
-    	theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, veUnit)), shiftedpsiaT);
+			// shiftedpsiaT
+			p = theTable.getPointer(shiftedpsia);
+			te = new SrcTickExpr(p);
+			IValExpr<Unit> veUnit = new GeneralFun<Unit>(
+					new IfThenElse<>(),
+					new CVValExpr<>(),
+					new GeneralFun<Unit>(new Constant<Unit>(Unit.unit())),
+					new GeneralFun<Object>(new Constant<Object>(Constants.notick()))
+					);
+			String shiftedpsiaT = shiftedpsia+"T";
+			theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, veUnit), shiftedpsiaT));
 
-    	// phiF
-    	p = theTable.getPointer(phi);
-    	te = new SrcTickExpr(p);
-    	veUnit = new GeneralFun<Unit>(
-    			new IfThenElse<>(),
-    			new CVValExpr<>(),
-    			new GeneralFun<Object>(new Constant<Object>(Constants.notick())),
-    			new GeneralFun<Unit>(new Constant<Unit>(Unit.unit()))
-    			);
-    	String phiF = phi+"F";
-    	theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, veUnit)), phiF);
+			// phiF
+			p = theTable.getPointer(phi);
+			te = new SrcTickExpr(p);
+			veUnit = new GeneralFun<Unit>(
+					new IfThenElse<>(),
+					new CVValExpr<>(),
+					new GeneralFun<Object>(new Constant<Object>(Constants.notick())),
+					new GeneralFun<Unit>(new Constant<Unit>(Unit.unit()))
+					);
+			String phiF = phi+"F";
+			theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, veUnit), phiF));
 
-    	// out
-    	te = new UnionTickExpr(
-    			new UnionTickExpr(
-    					new ShiftTickExpr(theTable.getPointer(psi), -a),
-    					new ShiftTickExpr(theTable.getPointer(psi), -b)),
-    			new UnionTickExpr(
-    					new SrcTickExpr(theTable.getPointer(phi)),
-    					new ShiftTickExpr(theTable.getPointer(phi), -b)));
-    	GeneralFun<Boolean> vebool = new GeneralFun<Boolean>(
-    			new And(),
-    			new GeneralFun<Boolean>(
-    					new LeqFun(),
-    					new GeneralFun<Double>(
-    							new UnsafeAdd(),
-    							getMinPsi(shiftedpsia, shiftedpsiaT),
-    							new GeneralFun<Double>(new Constant<>(a))
-    							),
-    					new GeneralFun<Double>(
-    							new UnsafeAdd(),
-    							new TExpr(),
-    							new GeneralFun<Double>(new Constant<>(b))
-    							)
-    					),
-    			new GeneralFun<Boolean>(
-    					new LeqFun(),
-    					new GeneralFun<Double>(
-    							new UnsafeAdd(),
-    							getMinPsi(shiftedpsia, shiftedpsiaT),
-    							new GeneralFun<Double>(new Constant<>(a))
-    							),
-    					getMinNotPhi(phi,phiF)
-    					)
-    			);
-    	theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), out);
+			// out
+			te = new UnionTickExpr(
+					new UnionTickExpr(
+							new ShiftTickExpr(theTable.getPointer(psi), -a),
+							new ShiftTickExpr(theTable.getPointer(psi), -b)),
+					new UnionTickExpr(
+							new SrcTickExpr(theTable.getPointer(phi)),
+							new ShiftTickExpr(theTable.getPointer(phi), -b)));
+			GeneralFun<Boolean> vebool = new GeneralFun<Boolean>(
+					new And(),
+					new GeneralFun<Boolean>(
+							new LeqFun(),
+							new GeneralFun<Double>(
+									new UnsafeAdd(),
+									getMinPsi(shiftedpsia, shiftedpsiaT),
+									new GeneralFun<Double>(new Constant<>(a))
+									),
+							new GeneralFun<Double>(
+									new UnsafeAdd(),
+									new TExpr(),
+									new GeneralFun<Double>(new Constant<>(b))
+									)
+							),
+					new GeneralFun<Boolean>(
+							new LeqFun(),
+							new GeneralFun<Double>(
+									new UnsafeAdd(),
+									getMinPsi(shiftedpsia, shiftedpsiaT),
+									new GeneralFun<Double>(new Constant<>(a))
+									),
+							getMinNotPhi(phi,phiF)
+							)
+					);
+			theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), out));
     }
 
     private static IValExpr<?> getMinNotPhi(String phi, String phiF) {

@@ -69,7 +69,7 @@ public class STLPoC {
 		}, "phi");*/
 
 		CsvLeader csvleader = new CsvLeader("/Users/felipe.gorostiaga/eclipse-workspace/FutStriverJava/data.csv");
-		theTable.setLeader(csvleader,"speed");
+		theTable.setLeader(csvleader);
 		
 		// outputs:
 		Pointer p;
@@ -83,7 +83,7 @@ public class STLPoC {
 				new PrevEqValExp<>(p, new TExpr()),
 				new GeneralFun<Object>(new Constant<Object>(MAX_SPEED))
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "toofast");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "toofast"));
 
 		//psi: speed < okspeed
 		p = theTable.getPointer("speed");
@@ -93,7 +93,7 @@ public class STLPoC {
 				new GeneralFun<Object>(new Constant<Object>(OK_SPEED)),
 				new PrevEqValExp<>(p, new TExpr())
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "psi");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "psi"));
 		
 		// acceleration: (speed(~t) - speed(<t)) / (t - speed<<t)
 		p = theTable.getPointer("speed");
@@ -111,7 +111,7 @@ public class STLPoC {
 						new Default<Double>(0d),
 						new PrevExp(theTable.getPointer("speed"), new TExpr()))
 					));
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vedouble)), "accel");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vedouble), "accel"));
 		
 		// phi: accel < 0
 		p = theTable.getPointer("accel");
@@ -121,7 +121,7 @@ public class STLPoC {
 				new GeneralFun<Object>(new Constant<Object>(0d)),
 				new PrevEqValExp<>(p, new TExpr())
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "phi");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "phi"));
 		
 		
 		// phifalse:
@@ -133,7 +133,7 @@ public class STLPoC {
 				new GeneralFun<Object>(new Constant<Object>(Constants.notick())),
 				new GeneralFun<Object>(new Constant<Object>(false))
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "phiFalse");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "phiFalse"));
 		
 		//psitrue:
 		p = theTable.getPointer("psi");
@@ -144,19 +144,19 @@ public class STLPoC {
 				new GeneralFun<Object>(new Constant<Object>(true)),
 				new GeneralFun<Object>(new Constant<Object>(Constants.notick()))
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "psiTrue");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "psiTrue"));
 		
 		// shiftphi
 		p = theTable.getPointer("phi");
 		te = new ShiftTickExpr(p,-b);
 		vebool = new CVValExpr<>();
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "shiftphi");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "shiftphi"));
 
 		// shiftpsi
 		p = theTable.getPointer("psi");
 		te = new ShiftTickExpr(p,-b);
 		vebool = new CVValExpr<Boolean>();
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "shiftpsi");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "shiftpsi"));
 		
 		// until[0, win]
 		SrcTickExpr phisrc = new SrcTickExpr(theTable.getPointer("phi"));
@@ -181,7 +181,7 @@ public class STLPoC {
 						getMinPsi()
 						)
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "until");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "until"));
 		
 		// property: toofast -> deacceleration until slow enough
 		te = new SrcTickExpr(theTable.getPointer("speed"));
@@ -189,7 +189,7 @@ public class STLPoC {
 				new PrevEqValExp<Boolean>(theTable.getPointer("toofast"), new TExpr()),
 				new PrevEqValExp<Boolean>(theTable.getPointer("until"), new TExpr())
 		);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool)), "property");
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "property"));
 		
 		// pointers
 		Pointer phi = theTable.getPointer("phi");
@@ -242,7 +242,7 @@ public class STLPoC {
 			}
 			for (Pointer pointer:pointers) {
 				System.out.println(pointer.getStreamId());
-				StriverEvent ev = new StriverEvent(0,true);
+				StriverEvent ev = new StriverEvent(null,0,true);
 				Object lastval = null;
 				while (ev.getTS()<100) {
 					ev = pointer.pull().getEvent();

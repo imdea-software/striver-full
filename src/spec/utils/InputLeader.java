@@ -9,9 +9,11 @@ public class InputLeader<T> implements ILeader<T> {
 	
 	// init these
 	private List<StriverEvent> values;
+	private String name;
 
-	public InputLeader(List<StriverEvent> values) {
+	public InputLeader(List<StriverEvent> values,String name) {
 		this.values = values;
+		this.name=name;
 	}
 
 	@Override
@@ -20,6 +22,11 @@ public class InputLeader<T> implements ILeader<T> {
 			return (StriverEvent) StriverEvent.posOutsideEv;
 		}
 		return values.remove(0);
+	}
+
+	@Override
+	public String getStreamName() {
+		return name;
 	}
 
 }

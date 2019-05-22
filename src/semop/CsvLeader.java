@@ -37,7 +37,7 @@ public class CsvLeader implements ILeader<Double> {
 						ts = lastTime + eps;
 					lastTime = ts;
 					processedEvents++;
-					return new StriverEvent(ts, Double.valueOf(data[1]));
+					return new StriverEvent(filename,ts, Double.valueOf(data[1]));
 				} else {
 					this.offset = lastTime;
 					this.br = new BufferedReader(new FileReader(filename));
@@ -50,6 +50,10 @@ public class CsvLeader implements ILeader<Double> {
 	}
 	public int processedEvents() {
 		return processedEvents;
+	}
+	@Override
+	public String getStreamName() {
+		return filename;
 	}
 	
 }

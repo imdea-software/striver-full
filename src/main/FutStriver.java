@@ -51,28 +51,24 @@ public class FutStriver {
 		
 		// inputs:
 		List<StriverEvent> values = new LinkedList<StriverEvent>(Arrays.asList(
-				new StriverEvent(10, 10)
+				new StriverEvent("in1",10, 10)
 				));
-		theTable.setLeader(new InputLeader<Integer>(values), "in1");
+		theTable.setLeader(new InputLeader<Integer>(values, "in1"));
 
-		values = new LinkedList<StriverEvent>(Arrays.asList(
-				new StriverEvent(0, 0),
-				new StriverEvent(2, 2),
-				new StriverEvent(4, 4),
-				new StriverEvent(6, 6),
-				new StriverEvent(8, 8),
-				new StriverEvent(10, 10)
-				));
 		//theTable.setLeader(new InputLeader<Integer>(values), "in2");
 		theTable.setLeader(new ILeader<Integer>() {
 
 			int nxt = 0;
 			@Override
 			public StriverEvent getNext() {
-				return new StriverEvent(nxt, nxt++);
+				return new StriverEvent("in2",nxt, nxt++);
+			}
+			@Override
+			public String getStreamName() {
+				return "in2";
 			}
 			
-		}, "in2");
+		});
 		
 		// outputs:
 		// r:
@@ -84,14 +80,14 @@ public class FutStriver {
 				new GeneralFun<Integer>(new Default<Integer>(0), new PrevValExp<>(prr, new TExpr())),
 				new PrevEqValExp<>(pri2, new TExpr())
 				);
-		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "r");
+		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint), "r"));
 		
 		// x:
 		p = theTable.getPointer("in1");
 		te = new SrcTickExpr(p);
 		p = theTable.getPointer("r");
 		veint = new PrevEqValExp<Integer>(p, new TExpr());
-		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "x");
+		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint), "x"));
 		
 		// s:
 		p = theTable.getPointer("r");
@@ -101,7 +97,7 @@ public class FutStriver {
 		veint = new GeneralFun<Integer>(new UnsafeAddInt(), 
 				new PrevEqValExp<>(psr, new TExpr()),
 				new SuccEqValExp<>(psx, new TExpr()));
-		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint)), "s");
+		theTable.setLeader(new Leader<Integer>(new StriverSpec(te, veint), "s"));
 		
 		/*
          input int in1, in2

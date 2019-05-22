@@ -2,13 +2,15 @@ package adts;
 
 public class StriverEvent {
 	
-	public static final StriverEvent posOutsideEv = new StriverEvent(Constants.INFTY, Constants.notick());
+	public static final StriverEvent posOutsideEv = new StriverEvent(null,Constants.INFTY, Constants.notick());
 	private double ts;
 	private Object value;
+	private String streamName;
 
-	public StriverEvent(double nt, Object object) {
+	public StriverEvent(String streamName, double nt, Object object) {
 		this.ts = nt;
 		this.value = object;
+		this.streamName = streamName;
 	}
 
 	public double getTS() {

@@ -1,4 +1,4 @@
-package main;
+package adts;
 
 public class Unit {
 	private static final Unit instance = new Unit();

@@ -11,10 +11,12 @@ public class Leader<T> implements ILeader<T> {
 	// init these
 	private ITickExpr myTickExpr;
 	private IValExpr<T> myValExpr;
+	private String name;
 	
-	public Leader(StriverSpec s) {
+	public Leader(StriverSpec s, String name) {
 		this.myTickExpr = s.getTickExpr();
 		this.myValExpr = s.getValExpr();
+		this.name=name;
 	}
 
 	public StriverEvent getNext() {
@@ -26,10 +28,15 @@ public class Leader<T> implements ILeader<T> {
 			return StriverEvent.posOutsideEv;
 		}
 		if (Constants.isnotick(tickTime.getCV())) {
-			return new StriverEvent(nt, Constants.notick());
+			return new StriverEvent(name, nt, Constants.notick());
 		}
 		Object val = myValExpr.calculateValueAt(nt,tickTime.getCV());
-		return new StriverEvent(nt, val);
+		return new StriverEvent(name, nt, val);
+	}
+
+	@Override
+	public String getStreamName() {
+		return name;
 	}
 
 }

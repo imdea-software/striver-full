@@ -33,8 +33,8 @@ public class Table {
 		return false;
 	}
 	
-	public void setLeader(ILeader<?> inputLeader, String streamid) {
-		leaders.put(streamid, inputLeader);
+	public void setLeader(ILeader<?> inputLeader) {
+		leaders.put(inputLeader.getStreamName(), inputLeader);
 	}
 
 	public Pointer getPointer(String stream) {

@@ -15,6 +15,7 @@ public class Pointer {
 	public String myId;
 	// exists for debug:
 	public double lastpos = -1d;
+	public int posintable=0;
 	
 	public Pointer(Table t, String streamid, GCIterator<StriverEvent> iterator, String debugid) {
 		this.t=t;
@@ -38,6 +39,8 @@ public class Pointer {
 		if (ev.getTS() == Constants.INFTY)
 			sendForward();
 		this.lastpos = ev.getTS();
+		if (!ev.isnotick())
+			this.posintable++;
 		return MaybeReentrant.of(ev);
 	}
 
