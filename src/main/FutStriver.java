@@ -47,7 +47,7 @@ public class FutStriver {
     		System.exit(0);*/
     	
     	
-		Table theTable = new Table();
+		Table theTable = Table.getInstance();
 		
 		// inputs:
 		List<StriverEvent> values = new LinkedList<StriverEvent>(Arrays.asList(

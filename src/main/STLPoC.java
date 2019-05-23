@@ -39,7 +39,7 @@ public class STLPoC {
 	private static final Double MAX_SPEED = 1d;
 	private static final Double OK_SPEED = 0.4d;
 	private static final Double b = 2d;
-	private static Table theTable = new Table();
+	private static Table theTable = Table.getInstance();
 
     public static void main(String[] args) throws InterruptedException {
     	

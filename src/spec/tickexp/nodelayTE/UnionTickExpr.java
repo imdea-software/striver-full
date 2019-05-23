@@ -1,6 +1,7 @@
 package spec.tickexp.nodelayTE;
 
 import adts.Constants;
+import adts.Pair;
 import semop.TickTime;
 import spec.tickexp.ITickExpr;
 
@@ -14,19 +15,19 @@ public class UnionTickExpr implements ITickExpr {
 	@Override
 	public TickTime calculateNextTime() {
 		double retdouble=0;
-		boolean retnotick=true;
 		leftTickTime = getNext(leftTickTime, leftExpr);
 		rightTickTime = getNext(rightTickTime, rightExpr);
 		double leftt = leftTickTime.getTS();
 		double rightt = rightTickTime.getTS();
+		Object leftval=Constants.notick(), rightval=Constants.notick();
 		if (leftt <= rightt) {
 			retdouble = leftt;
-			retnotick = Constants.isnotick(leftTickTime.getCV());
+			leftval = leftTickTime.getCV();
 			leftTickTime = null;
 		}
 		if (rightt <= leftt) {
 			retdouble = rightt;
-			retnotick = retnotick && Constants.isnotick(rightTickTime.getCV());
+			rightval = rightTickTime.getCV();
 			rightTickTime = null;
 		}
 		if (rightt == Constants.INFTY) {
@@ -37,7 +38,8 @@ public class UnionTickExpr implements ITickExpr {
 		}
 		assert (retdouble > lastts || lastts == Constants.INFTY);
 		lastts = retdouble;
-		return new TickTime(retdouble, retnotick?Constants.notick():null);
+		Object retval = Constants.isnotick(rightval) && Constants.isnotick(leftval) ? Constants.notick() : new Pair(leftval, rightval);
+		return new TickTime(retdouble, retval);
 	}
 	
 	private TickTime getNext(TickTime tickTime, ITickExpr tickExpr) {

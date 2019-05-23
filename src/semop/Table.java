@@ -9,6 +9,7 @@ import adts.GCList.GCLinkedList;
 
 public class Table {
 	
+	private static Table instance = new Table();
 	private HashSet<String> resolving = new HashSet<String>();
 	// init these:
 	private HashMap<String, GCLinkedList<StriverEvent>> theTable = new HashMap<>();
@@ -48,6 +49,12 @@ public class Table {
 		Pointer ret = new Pointer(this, stream, iterator, debugid);
 		pointers.add(ret);
 		return ret;
+	}
+	
+	private Table() {}
+
+	public static Table getInstance() {
+		return instance;
 	}
 
 }

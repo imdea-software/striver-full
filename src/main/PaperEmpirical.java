@@ -21,6 +21,7 @@ import spec.tickexp.nodelayTE.ConstTickExpr;
 import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.tickexp.nodelayTE.UnionTickExpr;
 import spec.utils.And;
+import spec.utils.BoundedSuccExpr;
 import spec.utils.Constant;
 import spec.utils.Default;
 import spec.utils.GeneralFun;
@@ -40,10 +41,38 @@ public class PaperEmpirical {
 
 	private static final Double MAX_SPEED = 1d;
 	private static final Double OK_SPEED = 0.4d;
-	private static Table theTable = new Table();
+	private static Table theTable = Table.getInstance();
 	private static int evs=0;
+	private static Double a=0d;
+	private static Double b=5d;
 
     public static void main(String[] args) throws InterruptedException, IOException {
+    	
+		Thread t = new Thread() {
+			public long peakMB = 0L;
+			public void run() {
+				// report:
+				while(true) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					/* Total amount of free memory available to the JVM */
+					System.gc();
+					//Thread.sleep(100);
+					// This might be constant because memory goes up during calculation..
+					// We should use an external tool or a dedicated thread.
+					long mb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
+					System.err.println("Peak memory: " + mb + " KB");
+					if (mb>peakMB) {
+						peakMB = mb;
+					}
+				}
+			}
+		};
+		t.start();
 		// input:
 		theTable.setLeader(new ILeader<Boolean>() {
 			double nxtTs = 0d;
@@ -106,7 +135,7 @@ public class PaperEmpirical {
 		
 		//createUntil("true", "speedok", 0d, 5d,"to_ok_in_five");
 
-		createUntil("deaccel", "speedok", 0d, 5d,"deaccels_to_ok_in_five");
+		createUntil("deaccel", "speedok", "deaccels_to_ok_in_five");
 		
 		// deaccel: accel < 0
 		te = new UnionTickExpr(
@@ -130,7 +159,6 @@ public class PaperEmpirical {
 				);
 
 		double limitTS = 0D;
-		long peakMB = 0L;
 		while (evs<100000000) {
 			for (Pointer pointer:pointers) {
 				StriverEvent ev = pointer.pull().getEvent();
@@ -144,21 +172,11 @@ public class PaperEmpirical {
 				}
 				limitTS = evTS;
 			}
-			// report:
-			if (evs%500000==1) {
-				/* Total amount of free memory available to the JVM */
-				System.gc();
-				Thread.sleep(100);
-				// This might be constant because memory goes up during calculation..
-				// We should use an external tool or a dedicated thread.
-				long mb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
-				if (mb>peakMB) peakMB = mb;
-			}
 		}
-		System.err.println("Peak memory: " + peakMB + " MB");
+		System.exit(0);
     }
 
-    private static void createUntil(String phi, String psi, Double a, Double b, String out) {
+    private static void createUntil(String phi, String psi, String out) {
 			// shiftedpsia
 			Pointer p = theTable.getPointer(psi);
 			ITickExpr te = new ShiftTickExpr(p,-a);
@@ -227,28 +245,26 @@ public class PaperEmpirical {
     }
 
     private static IValExpr<?> getMinNotPhi(String phi, String phiF) {
-    	Pointer phiPointer = theTable.getPointer(phi);
-    	Pointer phifalse = theTable.getPointer(phiF);
-    	return new GeneralFun<Double>(
-    			new IfThenElse<>(),
-    			new GeneralFun<Boolean>(
-    					new Default<Boolean>(false),
-    					new PrevEqValExp<Boolean>(phiPointer, new TExpr())),
-    			new SuccExp(phifalse, new TExpr()),
-    			new TExpr()
-    			);
+		Pointer phiPointer = theTable.getPointer(phi);
+		return new GeneralFun<Double>(
+				new IfThenElse<>(),
+				new GeneralFun<Boolean>(
+						new Default<Boolean>(false),
+						new PrevEqValExp<Boolean>(phiPointer, new TExpr())),
+				new BoundedSuccExpr(phiF, b),
+				new TExpr()
+				);
     }
 
     private static IValExpr<?> getMinPsi(String shiftedpsia, String shiftedpsiaT) {
     	Pointer psi = theTable.getPointer(shiftedpsia);
-    	Pointer psitrue = theTable.getPointer(shiftedpsiaT);
     	return new GeneralFun<Double>(
     			new IfThenElse<>(),
     			new GeneralFun<Boolean>(
     					new Default<Boolean>(false),
     					new PrevEqValExp<Boolean>(psi, new TExpr())),
     			new TExpr(),
-    			new SuccExp(psitrue, new TExpr())
+    			new BoundedSuccExpr(shiftedpsiaT, b-a)
     			);
     }
 
