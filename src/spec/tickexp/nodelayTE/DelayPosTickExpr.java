@@ -2,6 +2,7 @@ package spec.tickexp.nodelayTE;
 
 import adts.Constants;
 import adts.MaybeReentrant;
+import adts.Unit;
 import semop.Pointer;
 import semop.TickTime;
 import spec.tickexp.ITickExpr;
@@ -19,7 +20,7 @@ public class DelayPosTickExpr implements ITickExpr {
 		double evts = ev.isreentrant()?Constants.INFTY:ev.getEvent().getTS();
 		if (sum <= evts) {
 			// alarm goes off
-			ret = new TickTime(sum, false);
+			ret = new TickTime(sum, Unit.unit());
 			sum = Constants.INFTY;
 		}
 		// maybe update alarm with pulled event
@@ -27,7 +28,7 @@ public class DelayPosTickExpr implements ITickExpr {
 			sum = evts + (double) ev.getEvent().getValue();
 		}
 		if (ret==null) { // Alarm didn't go off
-			ret = new TickTime(evts, true);
+			ret = new TickTime(evts, Constants.notick());
 		}
 		return ret;
 	}

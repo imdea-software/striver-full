@@ -77,7 +77,7 @@ public class PaperEmpirical {
 		theTable.setLeader(new ILeader<Boolean>() {
 			double nxtTs = 0d;
 			double nxtVal = 0;
-			Random generator = new Random(6);
+			Random generator = new Random(5);
 			@Override
 			public StriverEvent getNext() {
 				nxtTs+=3;

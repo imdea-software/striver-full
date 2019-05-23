@@ -1,7 +1,5 @@
 package spec.utils;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-
 import adts.Constants;
 import adts.Pair;
 import semop.Leader;
@@ -9,14 +7,12 @@ import semop.Table;
 import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
 import spec.tickexp.ShiftTickExpr;
-import spec.tickexp.nodelayTE.DelayNegTickExpr;
 import spec.tickexp.nodelayTE.DelayPosTickExpr;
 import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.tickexp.nodelayTE.UnionTickExpr;
 import spec.valueexp.CVValExpr;
 import spec.valueexp.IValExpr;
 import spec.valueexp.SuccEqValExp;
-import spec.valueexp.SuccValExp;
 import spec.valueexp.tauexp.SuccExp;
 import spec.valueexp.tauexp.TExpr;
 
@@ -24,7 +20,7 @@ public class BoundedSuccExpr implements IValExpr<Object> {
 	
 	private Table theTable = Table.getInstance();
 	private double d;
-	private GeneralFun<Object> thefun;
+	private IValExpr<Object> thefun;
 
 	public BoundedSuccExpr(String signame, double d) {
 		if (d<=0)
@@ -56,8 +52,7 @@ public class BoundedSuccExpr implements IValExpr<Object> {
 		theTable.setLeader(new Leader<Object>(new StriverSpec(te, vebool), willtickname));
 		
 		// thefun
-		thefun = new GeneralFun<Object>(
-					new IfThenElse<Object>(),
+		thefun = new IfThenElseFast<Object>(
 					new GeneralFun<Boolean>(
 						new Default<Boolean>(false),
 						new SuccEqValExp<Boolean>(theTable.getPointer(willtickname), new TExpr())),
