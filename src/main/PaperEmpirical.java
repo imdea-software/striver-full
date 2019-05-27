@@ -45,6 +45,7 @@ public class PaperEmpirical {
 
     public static void main(String[] args) throws InterruptedException, IOException {
     	
+    		Thread mainThread = Thread.currentThread();
 		Thread t = new Thread() {
 			public long peakMB = 0L;
 			public void run() {
@@ -58,13 +59,13 @@ public class PaperEmpirical {
 					}
 					/* Total amount of free memory available to the JVM */
 					System.gc();
-					//Thread.sleep(100);
-					// This might be constant because memory goes up during calculation..
-					// We should use an external tool or a dedicated thread.
-					long mb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
-					System.err.println("Peak memory: " + mb + " KB");
-					if (mb>peakMB) {
-						peakMB = mb;
+					long kb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
+					System.err.println("Peak memory: " + kb + " KB");
+					if (kb>250000) {
+						System.out.println("too much memory");
+					}
+					if (kb>peakMB) {
+						peakMB = kb;
 					}
 				}
 			}

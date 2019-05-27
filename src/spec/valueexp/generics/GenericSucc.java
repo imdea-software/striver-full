@@ -36,6 +36,7 @@ public class GenericSucc<T> {
 		int counter = 0;
 		while (isEq?headt<t:headt<=t)
 		{
+			counter++;
 			MaybeReentrant ev = myPointer.pull();
 			assert !ev.isreentrant();
 			StriverEvent strevent = ev.getEvent();
