@@ -36,8 +36,6 @@ public class GenericSucc<T> {
 		int counter = 0;
 		while (isEq?headt<t:headt<=t)
 		{
-			if (counter++>5000000)
-				System.out.println("Counter: "+counter);
 			MaybeReentrant ev = myPointer.pull();
 			assert !ev.isreentrant();
 			StriverEvent strevent = ev.getEvent();

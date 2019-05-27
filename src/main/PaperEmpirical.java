@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Random;
 
 import adts.Constants;
-import adts.MaybeReentrant;
 import adts.StriverEvent;
 import adts.Unit;
-import adts.GCList.GCIterator;
 import semop.ILeader;
 import semop.Leader;
 import semop.Pointer;
@@ -34,7 +32,6 @@ import spec.valueexp.CVValExpr;
 import spec.valueexp.IValExpr;
 import spec.valueexp.PrevEqValExp;
 import spec.valueexp.SuccValExp;
-import spec.valueexp.tauexp.SuccExp;
 import spec.valueexp.tauexp.TExpr;
 
 public class PaperEmpirical {
@@ -171,6 +168,14 @@ public class PaperEmpirical {
 					//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
 				}
 				limitTS = evTS;
+			}
+			if (evs%5000==0&&false) {
+				/* Total amount of free memory available to the JVM */
+				//System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+				for (Pointer pointer:theTable.pointers) {
+					System.out.println("Pointer " + pointer.myId + " for stream " + pointer.getStreamId() + " next val: " +pointer.myIterator.pnext);
+				}
+				System.out.println("-----------------------");
 			}
 		}
 		System.exit(0);

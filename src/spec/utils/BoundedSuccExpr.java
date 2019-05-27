@@ -12,28 +12,31 @@ import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.tickexp.nodelayTE.UnionTickExpr;
 import spec.valueexp.CVValExpr;
 import spec.valueexp.IValExpr;
-import spec.valueexp.SuccEqValExp;
+import spec.valueexp.PrevEqValExp;
 import spec.valueexp.tauexp.SuccExp;
 import spec.valueexp.tauexp.TExpr;
 
 public class BoundedSuccExpr implements IValExpr<Object> {
 	
 	private Table theTable = Table.getInstance();
-	private double d;
+	private double b;
 	private IValExpr<Object> thefun;
+	
+	private static int id=0;
 
-	public BoundedSuccExpr(String signame, double d) {
-		if (d<=0)
+	public BoundedSuccExpr(String signame, double b) {
+		if (b<=0)
 			return;
-		this.d=d;
+		this.b=b;
+		id++;
 		// alarm
-		String alarmname = signame + "_alarm"+d;
+		String alarmname = signame + "_alarm_"+b+id;
 		ITickExpr te = new SrcTickExpr(theTable.getPointer(signame));
-		GeneralFun<Double> ve = new GeneralFun<Double>(new Constant<Double>(d));
+		GeneralFun<Double> ve = new GeneralFun<Double>(new Constant<Double>(b));
 		theTable.setLeader(new Leader<Double>(new StriverSpec(te, ve), alarmname));
 		
 		// hasticked
-		String hastickedname = signame + "_hasticked_"+d;
+		String hastickedname = signame + "_hasticked_"+b+id;
 		te = new UnionTickExpr(
 				new SrcTickExpr(theTable.getPointer(signame)),
 				new DelayPosTickExpr(theTable.getPointer(alarmname))
@@ -46,8 +49,8 @@ public class BoundedSuccExpr implements IValExpr<Object> {
 		theTable.setLeader(new Leader<Object>(new StriverSpec(te, vebool), hastickedname));
 
 		// willtick
-		String willtickname = signame + "_willtick_"+d;
-		te = new ShiftTickExpr(theTable.getPointer(hastickedname), -d);
+		String willtickname = signame + "_willtick_"+b+id;
+		te = new ShiftTickExpr(theTable.getPointer(hastickedname), -b);
 		vebool = new CVValExpr<Boolean>();
 		theTable.setLeader(new Leader<Object>(new StriverSpec(te, vebool), willtickname));
 		
@@ -55,7 +58,7 @@ public class BoundedSuccExpr implements IValExpr<Object> {
 		thefun = new IfThenElseFast<Object>(
 					new GeneralFun<Boolean>(
 						new Default<Boolean>(false),
-						new SuccEqValExp<Boolean>(theTable.getPointer(willtickname), new TExpr())),
+						new PrevEqValExp<Boolean>(theTable.getPointer(willtickname), new TExpr())),
 					new SuccExp(theTable.getPointer(signame), new TExpr()),
 					new GeneralFun<Object>(new Constant<Object>(Constants.posoutside())));
 					
@@ -63,14 +66,14 @@ public class BoundedSuccExpr implements IValExpr<Object> {
 
 	@Override
 	public void unhookPointers() {
-		if (d<=0)
+		if (b<=0)
 			return;
 		thefun.unhookPointers();
 	}
 
 	@Override
 	public Object calculateValueAt(double nt, Object cv) {
-		if (d<=0)
+		if (b<=0)
 			return Constants.posoutside();
 		return thefun.calculateValueAt(nt, cv);
 	}
