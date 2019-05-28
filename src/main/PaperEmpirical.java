@@ -19,7 +19,6 @@ import spec.tickexp.nodelayTE.ConstTickExpr;
 import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.tickexp.nodelayTE.UnionTickExpr;
 import spec.utils.And;
-import spec.utils.BoundedSuccExpr;
 import spec.utils.Constant;
 import spec.utils.Default;
 import spec.utils.GeneralFun;
@@ -32,6 +31,7 @@ import spec.valueexp.CVValExpr;
 import spec.valueexp.IValExpr;
 import spec.valueexp.PrevEqValExp;
 import spec.valueexp.SuccValExp;
+import spec.valueexp.generics.SuccBoundedExpr;
 import spec.valueexp.tauexp.TExpr;
 
 public class PaperEmpirical {
@@ -70,7 +70,8 @@ public class PaperEmpirical {
 				}
 			}
 		};
-		t.start();
+		//t.start();
+
 		// input:
 		theTable.setLeader(new ILeader<Boolean>() {
 			double nxtTs = 0d;
@@ -170,9 +171,12 @@ public class PaperEmpirical {
 				}
 				limitTS = evTS;
 			}
-			if (evs%5000==0&&false) {
+			if (evs%5000==0&&true) {
+					System.gc();
+					Thread.sleep(500);
 				/* Total amount of free memory available to the JVM */
 				//System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
+				theTable.size();
 				for (Pointer pointer:theTable.pointers) {
 					System.out.println("Pointer " + pointer.myId + " for stream " + pointer.getStreamId() + " next val: " +pointer.myIterator.pnext);
 				}
@@ -257,7 +261,7 @@ public class PaperEmpirical {
 				new GeneralFun<Boolean>(
 						new Default<Boolean>(false),
 						new PrevEqValExp<Boolean>(phiPointer, new TExpr())),
-				new BoundedSuccExpr(phiF, b),
+				new SuccBoundedExpr(theTable.getPointer(phiF), b),
 				new TExpr()
 				);
     }
@@ -270,7 +274,7 @@ public class PaperEmpirical {
     					new Default<Boolean>(false),
     					new PrevEqValExp<Boolean>(psi, new TExpr())),
     			new TExpr(),
-    			new BoundedSuccExpr(shiftedpsiaT, b-a)
+    			new SuccBoundedExpr(theTable.getPointer(shiftedpsiaT), b-a)
     			);
     }
 

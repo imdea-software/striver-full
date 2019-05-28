@@ -2,6 +2,7 @@ package semop;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import adts.StriverEvent;
 import adts.GCList.GCIterator;
@@ -55,6 +56,13 @@ public class Table {
 
 	public static Table getInstance() {
 		return instance;
+	}
+
+	public void size() {
+		for (Pointer kv:this.pointers) {
+			System.out.println("position of "+ kv.getStreamId()+ " created at " + kv.myId+ ": " + kv.posintable);
+		}
+		
 	}
 
 }
