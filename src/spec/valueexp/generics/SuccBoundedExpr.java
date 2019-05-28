@@ -14,6 +14,7 @@ public class SuccBoundedExpr implements IValExpr<Double> {
 	// init these
 	private Pointer myPointer;
 	private double bound;
+	private Double firstbeyond=null;
 
 	public SuccBoundedExpr(Pointer p, double bound) {
 		this.myPointer = p;
@@ -30,6 +31,9 @@ public class SuccBoundedExpr implements IValExpr<Double> {
 			return headt;
 		}
 		int counter = 0;
+		if (firstbeyond != null && firstbeyond>t+bound)
+			return Constants.INFTY;
+		firstbeyond=null;
 		while (headt<=t)
 		{
 			counter++;
@@ -37,7 +41,8 @@ public class SuccBoundedExpr implements IValExpr<Double> {
 			assert !ev.isreentrant();
 			StriverEvent strevent = ev.getEvent();
 			double evTS = strevent.getTS();
-			if (evTS>t+bound) {
+			if (evTS>t+bound&&!false) {
+				firstbeyond = evTS;
 				return Constants.INFTY;
 			}
 			if (!strevent.isnotick()) {
