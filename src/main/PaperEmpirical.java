@@ -41,11 +41,10 @@ public class PaperEmpirical {
 	private static Table theTable = Table.getInstance();
 	private static int evs=0;
 	private static Double a=0d;
-	private static Double b=5d;
+	private static Double b=5000d;
 
     public static void main(String[] args) throws InterruptedException, IOException {
     	
-    		Thread mainThread = Thread.currentThread();
 		Thread t = new Thread() {
 			public long peakMB = 0L;
 			public void run() {
@@ -60,7 +59,7 @@ public class PaperEmpirical {
 					/* Total amount of free memory available to the JVM */
 					System.gc();
 					long kb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
-					System.err.println("Peak memory: " + kb + " KB");
+					System.err.println("Used memory: " + kb + " KB");
 					if (kb>250000) {
 						System.out.println("too much memory");
 					}
@@ -70,7 +69,7 @@ public class PaperEmpirical {
 				}
 			}
 		};
-		//t.start();
+		t.start();
 
 		// input:
 		theTable.setLeader(new ILeader<Boolean>() {
@@ -172,15 +171,14 @@ public class PaperEmpirical {
 				limitTS = evTS;
 			}
 			if (evs%5000==0&&true) {
-					System.gc();
-					Thread.sleep(500);
+				System.gc();
+				Thread.sleep(100);
 				/* Total amount of free memory available to the JVM */
 				//System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
-				theTable.size();
-				for (Pointer pointer:theTable.pointers) {
+				/*for (Pointer pointer:theTable.pointers) {
 					System.out.println("Pointer " + pointer.myId + " for stream " + pointer.getStreamId() + " next val: " +pointer.myIterator.pnext);
 				}
-				System.out.println("-----------------------");
+				System.out.println("-----------------------");*/
 			}
 		}
 		System.exit(0);
