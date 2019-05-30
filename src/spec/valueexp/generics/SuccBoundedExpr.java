@@ -43,6 +43,8 @@ public class SuccBoundedExpr implements IValExpr<Double> {
 			double evTS = strevent.getTS();
 			if (evTS>t+bound&&!false) {
 				firstbeyond = evTS;
+				if (!strevent.isnotick())
+					headt = evTS;
 				return Constants.INFTY;
 			}
 			if (!strevent.isnotick()) {
