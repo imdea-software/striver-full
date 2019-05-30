@@ -38,7 +38,7 @@ import spec.valueexp.tauexp.TExpr;
 public class PaperEmpirical {
 
 	private static final Double MAX_SPEED = 1d;
-	private static final Double OK_SPEED = 0.85d;
+	private static final Double OK_SPEED = 0.8d;
 	private static Table theTable = Table.getInstance();
 	private static int evs=0;
 	private static final Double a=0d;
@@ -73,11 +73,14 @@ public class PaperEmpirical {
 		theTable.setLeader(new ILeader<Boolean>() {
 			double nxtTs = 0d;
 			double nxtVal = 0;
+			int sgn = 1;
 			Random generator = new Random(5);
 			@Override
 			public StriverEvent getNext() {
 				nxtTs+=timediff;
-				nxtVal = nxtVal + generator.nextDouble()-0.5;
+				double nxtOff = generator.nextDouble()-0.5+(0.3*sgn);
+				sgn = nxtOff<0?-1:1;
+				nxtVal = nxtVal + nxtOff;
 				evs++;
 				for (Double sample : samplepoints)
 					if (sample == evs) {
@@ -86,7 +89,7 @@ public class PaperEmpirical {
 						long kb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
 						//System.out.println("Evs:" + evs + ". Used memory: " + kb + " KB");
 					}
-				if (evs==100d)
+				if (evs==10000d)
 					System.exit(0);
 				return new StriverEvent("speed",nxtTs, nxtVal);
 			}
@@ -195,13 +198,7 @@ public class PaperEmpirical {
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "interesting"));
 
 		List<Pointer> pointers = Arrays.asList(
-				theTable.getPointer("deaccellerating"),
-				theTable.getPointer("deaccelleratingF"),
-				theTable.getPointer("shiftedspeedok0.0"),
 				theTable.getPointer("speed"),
-				theTable.getPointer("deaccels_to_ok_in_win"),
-				theTable.getPointer("toofast"),
-				theTable.getPointer("speedok"),
 				theTable.getPointer("interesting"),
 				theTable.getPointer("too_fast_implies_deaccels_to_ok_in_win")
 				);
