@@ -32,6 +32,7 @@ import spec.valueexp.IValExpr;
 import spec.valueexp.PrevEqValExp;
 import spec.valueexp.SuccValExp;
 import spec.valueexp.generics.SuccBoundedExpr;
+import spec.valueexp.tauexp.SuccExp;
 import spec.valueexp.tauexp.TExpr;
 
 public class PaperEmpirical {
@@ -40,37 +41,34 @@ public class PaperEmpirical {
 	private static final Double OK_SPEED = 0.4d;
 	private static Table theTable = Table.getInstance();
 	private static int evs=0;
-	private static Double a=0d;
-	private static Double b=5000d;
+	private static final Double a=0d;
+	private static Double b=5d;
+	private static boolean bounded;
+
+	private static final Double[] samplepoints = new Double[] {
+		100000d,
+		500000d,
+		1000000d,
+		5000000d,
+		10000000d,
+		50000000d,
+		100000000d,
+	};
 
     public static void main(String[] args) throws InterruptedException, IOException {
-    	
-		Thread t = new Thread() {
-			public long peakMB = 0L;
-			public void run() {
-				// report:
-				while(true) {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					/* Total amount of free memory available to the JVM */
-					System.gc();
-					long kb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
-					System.err.println("Used memory: " + kb + " KB");
-					if (kb>250000) {
-						System.out.println("too much memory");
-					}
-					if (kb>peakMB) {
-						peakMB = kb;
-					}
-				}
-			}
-		};
-		t.start();
-
+		if (args.length<3) {
+			System.out.println("Not enough arguments");
+			System.out.println("Arg 1: b (win size)");
+			System.out.println("Arg 2: events per second (rate)");
+			System.out.println("Arg 3: bounded/unbounded");
+			System.exit(0);
+		}
+		b = Double.parseDouble(args[0]);
+		double timediff = 1/Double.parseDouble(args[1]);
+		bounded = "bounded".equals(args[2]);
+		System.out.println("Win size: "+b);
+		System.out.println("Evs per second: "+args[1]);
+		System.out.println("Future bounded: "+bounded);
 		// input:
 		theTable.setLeader(new ILeader<Boolean>() {
 			double nxtTs = 0d;
@@ -78,9 +76,18 @@ public class PaperEmpirical {
 			Random generator = new Random(5);
 			@Override
 			public StriverEvent getNext() {
-				nxtTs+=3;
+				nxtTs+=timediff;
 				nxtVal = nxtVal + generator.nextDouble()-0.5;
 				evs++;
+				for (Double sample : samplepoints)
+					if (sample == evs) {
+						System.gc();
+						try { Thread.sleep(100); } catch (InterruptedException e) {}
+						long kb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
+						System.out.println("Evs:" + evs + ". Used memory: " + kb + " KB");
+						if (evs==100000000d)
+							System.exit(0);
+					}
 				return new StriverEvent("speed",nxtTs, nxtVal);
 			}
 			@Override
@@ -95,50 +102,69 @@ public class PaperEmpirical {
 		ITickExpr te;
 		IValExpr<Boolean> vebool;
 		
-		// true: true
+		// true: 
+		/*
+		 * ticks unit truestream = {0}
+		 * define bool truestream = true
+		 * */
 		te = new ConstTickExpr(0);
 		GeneralFun<Boolean> ve = new GeneralFun<Boolean>(new Constant<Boolean>(true));
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, ve), "true"));
 
-		//toofast: speed > max
+		//toofast:
+		/*
+		 * ticks double toofast = speed.ticks
+		 * define bool toofast = cv > MAX_SPEED
+		 */
 		p = theTable.getPointer("speed");
 		te = new SrcTickExpr(p);
-		p = theTable.getPointer("speed");
 		vebool = new GeneralFun<Boolean>(new GtFun(),
-				new PrevEqValExp<>(p, new TExpr()),
+				new CVValExpr<Double>(),
 				new GeneralFun<Object>(new Constant<Object>(MAX_SPEED))
 				);
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "toofast"));
 
-		//psi: speed < okspeed
+		//speedok:
+		/*
+		 * ticks dobule speedok = speed.ticks
+		 * define bool speedok = OK_SPEED > cv
+		 */
 		p = theTable.getPointer("speed");
 		te = new SrcTickExpr(p);
-		p = theTable.getPointer("speed");
 		vebool = new GeneralFun<Boolean>(new GtFun(),
 				new GeneralFun<Object>(new Constant<Object>(OK_SPEED)),
-				new PrevEqValExp<>(p, new TExpr())
+				new CVValExpr<Double>()
 				);
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "speedok"));
 		
-		// deaccel: accel < 0
+		// deaccellerating:
+		/*
+		 * ticks double deaccellerating = speed.ticks
+		 * define double deaccellerating = cv > speed(>t)
+		 */
 		p = theTable.getPointer("speed");
 		te = new SrcTickExpr(p);
 		vebool = new GeneralFun<Boolean>(new GtFun(),
-				new PrevEqValExp<>(theTable.getPointer("speed"), new TExpr()),
+				new CVValExpr<Double>(),
 				new SuccValExp<>(theTable.getPointer("speed"), new TExpr())
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "deaccel"));
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "deaccellerating"));
 		
-		//createUntil("true", "deaccel", -1d, 2d, "event_deaccel");
+		//createUntil("true", "deaccellerating", -1d, 2d, "event_deaccel");
 		
-		//createUntil("true", "speedok", 0d, 5d,"to_ok_in_five");
+		//createUntil("true", "speedok", 0d, 5d,"to_ok_in_win");
 
-		createUntil("deaccel", "speedok", "deaccels_to_ok_in_five");
+		// deaccels_to_ok_in_win = deaccellerating U[a,b] speedok
+		createUntil("deaccellerating", "speedok", "deaccels_to_ok_in_win");
 		
-		// deaccel: accel < 0
+		// too_fast_implies_deaccels_to_ok_in_window
+		/*
+		 * ticks (bool,bool) TFIDOIW = toofast.ticks U DTOIW.ticks
+		 * define bool TFIDOIW = toofast(~t|false) -> DTOIW(~t|true)
+		 */
 		te = new UnionTickExpr(
 				new SrcTickExpr(theTable.getPointer("toofast")),
-				new SrcTickExpr(theTable.getPointer("deaccels_to_ok_in_five"))
+				new SrcTickExpr(theTable.getPointer("deaccels_to_ok_in_win"))
 				);
 		vebool = new GeneralFun<Boolean>(new Implies(),
 				new GeneralFun<Boolean>(
@@ -146,18 +172,18 @@ public class PaperEmpirical {
 					new PrevEqValExp<>(theTable.getPointer("toofast"), new TExpr())),
 				new GeneralFun<Boolean>(
     					new Default<Boolean>(true),
-				new PrevEqValExp<>(theTable.getPointer("deaccels_to_ok_in_five"), new TExpr()))
+				new PrevEqValExp<>(theTable.getPointer("deaccels_to_ok_in_win"), new TExpr()))
 				);
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "too_fast_implies_deaccels_to_ok_in_five"));
+		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "too_fast_implies_deaccels_to_ok_in_win"));
 		
 
 		List<Pointer> pointers = Arrays.asList(
 				//theTable.getPointer("speed"),
-				theTable.getPointer("too_fast_implies_deaccels_to_ok_in_five")
+				theTable.getPointer("too_fast_implies_deaccels_to_ok_in_win")
 				);
 
 		double limitTS = 0D;
-		while (evs<100000000) {
+		while (true) {
 			for (Pointer pointer:pointers) {
 				StriverEvent ev = pointer.pull().getEvent();
 				double evTS = ev.getTS();
@@ -170,7 +196,7 @@ public class PaperEmpirical {
 				}
 				limitTS = evTS;
 			}
-			if (evs%5000==0&&true) {
+			if (evs%5000==0&&!true) {
 				System.gc();
 				Thread.sleep(100);
 				/* Total amount of free memory available to the JVM */
@@ -181,7 +207,6 @@ public class PaperEmpirical {
 				System.out.println("-----------------------");*/
 			}
 		}
-		System.exit(0);
     }
 
     private static void createUntil(String phi, String psi, String out) {
@@ -254,26 +279,34 @@ public class PaperEmpirical {
 
     private static IValExpr<?> getMinNotPhi(String phi, String phiF) {
 		Pointer phiPointer = theTable.getPointer(phi);
+		Pointer phiFpointer = theTable.getPointer(phiF);
+		IValExpr<?> succExpr=bounded?
+				new SuccBoundedExpr(phiFpointer, b):
+				new SuccExp(phiFpointer, new TExpr());
 		return new GeneralFun<Double>(
 				new IfThenElse<>(),
 				new GeneralFun<Boolean>(
 						new Default<Boolean>(false),
 						new PrevEqValExp<Boolean>(phiPointer, new TExpr())),
-				new SuccBoundedExpr(theTable.getPointer(phiF), b),
+				succExpr,
 				new TExpr()
 				);
-    }
+	}
 
-    private static IValExpr<?> getMinPsi(String shiftedpsia, String shiftedpsiaT) {
+private static IValExpr<?> getMinPsi(String shiftedpsia, String shiftedpsiaT) {
     	Pointer psi = theTable.getPointer(shiftedpsia);
-    	return new GeneralFun<Double>(
-    			new IfThenElse<>(),
-    			new GeneralFun<Boolean>(
-    					new Default<Boolean>(false),
-    					new PrevEqValExp<Boolean>(psi, new TExpr())),
-    			new TExpr(),
-    			new SuccBoundedExpr(theTable.getPointer(shiftedpsiaT), b-a)
-    			);
+    	Pointer shiftedpsiaTpointer = theTable.getPointer(shiftedpsiaT);
+	IValExpr<?> succExpr = bounded?
+		new SuccBoundedExpr(shiftedpsiaTpointer, b-a):
+		new SuccExp(shiftedpsiaTpointer, new TExpr());
+	return new GeneralFun<Double>(
+			new IfThenElse<>(),
+			new GeneralFun<Boolean>(
+					new Default<Boolean>(false),
+					new PrevEqValExp<Boolean>(psi, new TExpr())),
+			new TExpr(),
+			succExpr
+			);
     }
 
 }
