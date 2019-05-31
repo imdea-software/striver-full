@@ -15,7 +15,6 @@ import semop.Table;
 import spec.StriverSpec;
 import spec.tickexp.ITickExpr;
 import spec.tickexp.ShiftTickExpr;
-import spec.tickexp.nodelayTE.ConstTickExpr;
 import spec.tickexp.nodelayTE.SrcTickExpr;
 import spec.tickexp.nodelayTE.UnionTickExpr;
 import spec.utils.And;
@@ -42,18 +41,8 @@ public class PaperEmpirical {
 	private static Table theTable = Table.getInstance();
 	private static int evs=0;
 	private static final Double a=0d;
-	private static Double b=50d;
+	private static Double b=5d;
 	private static boolean bounded;
-
-	private static final Double[] samplepoints = new Double[] {
-			100000d,
-			500000d,
-			1000000d,
-			5000000d,
-			10000000d,
-			50000000d,
-			100000000d,
-	};
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 		if (args.length<3) {
@@ -66,15 +55,17 @@ public class PaperEmpirical {
 		b = Double.parseDouble(args[0]);
 		double timediff = 1/Double.parseDouble(args[1]);
 		bounded = "bounded".equals(args[2]);
-		System.out.println("Win size: "+b);
+		/*System.out.println("Win size: "+b);
 		System.out.println("Evs per second: "+args[1]);
-		System.out.println("Future bounded: "+bounded);
+		System.out.println("Future bounded: "+bounded);*/
 		// input:
 		theTable.setLeader(new ILeader<Boolean>() {
 			double nxtTs = 0d;
 			double nxtVal = 0;
 			int sgn = 1;
 			Random generator = new Random(5);
+			int counter = 0;
+			double lastkb = 0d;
 			@Override
 			public StriverEvent getNext() {
 				nxtTs+=timediff;
@@ -82,15 +73,17 @@ public class PaperEmpirical {
 				sgn = nxtOff<0?-1:1;
 				nxtVal = nxtVal + nxtOff;
 				evs++;
-				for (Double sample : samplepoints)
-					if (sample == evs) {
-						System.gc();
-						try { Thread.sleep(100); } catch (InterruptedException e) {}
-						long kb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
-						//System.out.println("Evs:" + evs + ". Used memory: " + kb + " KB");
+				if (evs%1000==0) {
+					System.gc();
+					try { Thread.sleep(100); } catch (InterruptedException e) {}
+					long kb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
+					if (kb==lastkb) counter++; else counter=0;
+					lastkb=kb;
+					if (counter>5) {
+						System.out.println("Win size " + b + "; Rate: " + args[1] + "; Used memory: " + kb);
+						System.exit(0);
 					}
-				if (evs==10000d)
-					System.exit(0);
+				}
 				return new StriverEvent("speed",nxtTs, nxtVal);
 			}
 			@Override
@@ -104,15 +97,6 @@ public class PaperEmpirical {
 		Pointer p;
 		ITickExpr te;
 		IValExpr<Boolean> vebool;
-
-		// true: 
-		/*
-		 * ticks unit truestream = {0}
-		 * define bool truestream = true
-		 * */
-		te = new ConstTickExpr(0);
-		GeneralFun<Boolean> ve = new GeneralFun<Boolean>(new Constant<Boolean>(true));
-		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, ve), "true"));
 
 		//toofast:
 		/*
@@ -155,10 +139,6 @@ public class PaperEmpirical {
 				new SuccValExp<>(theTable.getPointer("speed"), new TExpr())
 				);
 		theTable.setLeader(new Leader<Boolean>(new StriverSpec(te, vebool), "deaccellerating"));
-
-		//createUntil("true", "deaccellerating", -1d, 2d, "event_deaccel");
-
-		//createUntil("true", "speedok", 0d, 5d,"to_ok_in_win");
 
 		// deaccels_to_ok_in_win = deaccellerating U[a,b] speedok
 		createUntil("deaccellerating", "speedok", "deaccels_to_ok_in_win");
@@ -208,12 +188,12 @@ public class PaperEmpirical {
 			for (Pointer pointer:pointers) {
 				StriverEvent ev = pointer.pull().getEvent();
 				double evTS = ev.getTS();
-				System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
+				//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
 				// Keep the pointers close to each other
 				while (evTS<limitTS) {
 					ev = pointer.pull().getEvent();
 					evTS = ev.getTS();
-					System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
+					//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
 				}
 				limitTS = evTS;
 			}
