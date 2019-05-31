@@ -37,7 +37,7 @@ import spec.valueexp.tauexp.TExpr;
 public class PaperEmpirical {
 
 	private static final Double MAX_SPEED = 1d;
-	private static final Double OK_SPEED = 0.8d;
+	private static final Double OK_SPEED = -1d;
 	private static Table theTable = Table.getInstance();
 	private static int evs=0;
 	private static final Double a=0d;
@@ -73,14 +73,14 @@ public class PaperEmpirical {
 				sgn = nxtOff<0?-1:1;
 				nxtVal = nxtVal + nxtOff;
 				evs++;
-				if (evs%1000==0) {
+				if (evs%250==0) {
 					System.gc();
 					try { Thread.sleep(100); } catch (InterruptedException e) {}
 					long kb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024;
 					if (kb==lastkb) counter++; else counter=0;
 					lastkb=kb;
-					if (counter>5) {
-						System.out.println("Win size " + b + "; Rate: " + args[1] + "; Used memory: " + kb);
+					if (true||counter>5) {
+						//System.out.println("Win size " + b + "; Rate: " + args[1] + "; Used memory: " + kb);
 						System.exit(0);
 					}
 				}
@@ -188,24 +188,14 @@ public class PaperEmpirical {
 			for (Pointer pointer:pointers) {
 				StriverEvent ev = pointer.pull().getEvent();
 				double evTS = ev.getTS();
-				//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
+				System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
 				// Keep the pointers close to each other
 				while (evTS<limitTS) {
 					ev = pointer.pull().getEvent();
 					evTS = ev.getTS();
-					//System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
+					System.out.println(pointer.getStreamId() + "[" + evTS + "] = " + ev.getValue());
 				}
 				limitTS = evTS;
-			}
-			if (evs%5000==0&&!true) {
-				System.gc();
-				Thread.sleep(100);
-				/* Total amount of free memory available to the JVM */
-				//System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
-				/*for (Pointer pointer:theTable.pointers) {
-					System.out.println("Pointer " + pointer.myId + " for stream " + pointer.getStreamId() + " next val: " +pointer.myIterator.pnext);
-				}
-				System.out.println("-----------------------");*/
 			}
 		}
 	}
